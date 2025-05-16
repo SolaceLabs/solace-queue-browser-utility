@@ -1,0 +1,13 @@
+name: web-server
+services:
+  httpd:
+    hostname: httpd
+    container_name: busybox-httpd
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      # http
+      - '48080:8080'
+    volumes:
+      - ./www:/www
