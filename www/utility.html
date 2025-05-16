@@ -1,0 +1,169 @@
+<html>
+<head>
+<title>Solace Web Utility - Solace Professional Services &copy; 2025</title>
+<link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlcgASZXIAJKVyADJlcgA8JXIAPuVyADflcgAoJXIACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACVyAAhlcgAkJXIAPOVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgAnQAAAAAAAAAAAAAAAAAAAACVyAAhlcgAppXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyADLAAAAAAAAAAAAAAAAlcgAkJXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAJ0AAAAAlcgASZXIAPOVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgAIJXIAJKVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAKCVyADJlcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyADflcgA8JXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA+5XIAPuVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAPCVyADflcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyADJlcgAoJXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgAkpXIACCVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA85XIAEkAAAAAlcgAnZXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAJAAAAAAAAAAAAAAAACVyADLlcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAKaVyAAhAAAAAAAAAAAAAAAAAAAAAJXIAJ2VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA85XIAJCVyAAhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlcgAIJXIAKCVyADflcgA+5XIAPCVyADJlcgAkpXIAEkAAAAAAAAAAAAAAAAAAAAA+B8AAOAHAADAAwAAgAEAAIABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAAgAEAAMADAADgBwAA+B8AAA==">
+<style>
+  ul {
+	margin: 0px 0px 0px 0px;
+	padding: 0px;
+  }  
+  li.tick { 
+    list-style-type: '\2714';
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 3px;
+  }
+  li.tick::marker {
+    color: #008000;
+  }
+  li.cross {
+    list-style-type: '\2718';
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 3px;
+  }
+  li.cross::marker {
+    color: #A00000;
+  }
+</style>
+<script>
+versions = {
+  solaceApi: "10.18.0",
+  swu: "1.0.0",
+  isHosted: window.location.protocol.startsWith("http")
+}
+
+const scriptResults = {
+  outputLog: "",
+  loaded: [],
+  failed: [],
+  messages: []
+};
+
+function loadFile(type, url) {
+  return new Promise((resolve, reject) => {
+    if (type == "js") {
+      const script = document.createElement('script');
+      script.src = url;
+      script.onload = () => resolve();
+      script.onerror = () => reject();
+      document.head.appendChild(script);
+	} else if (type == "css") {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = url;
+      link.onload = () => resolve();
+      link.onerror = () => reject();
+      document.head.appendChild(link);
+	}
+  });
+}
+
+async function loadWithFallback(name, type, primaryUrl, secondaryUrl) {
+  try {
+    await loadFile(type, primaryUrl);
+    scriptResults.loaded.push(name);
+    scriptResults.messages.push(`<li class="tick"> Loaded ${name}</li>`);
+    return true;
+  } catch (primaryError) {
+    try {
+	  if (secondaryUrl.length == 0)
+	    throw new Error("No Secondary Url");
+      await loadFile(type, secondaryUrl);
+      scriptResults.loaded.push(name);
+    scriptResults.messages.push(`<li class="tick"> Loaded ${name} (via url)</li>`);
+      return true;
+    } catch (secondaryError) {
+      scriptResults.failed.push(name);
+      scriptResults.messages.push(`<li class="cross">Failed to load ${name}</li>`);
+      return false;
+    }
+  }
+}
+
+async function checkAndLoadScripts(scripts) {
+  const results = await Promise.allSettled(
+    scripts.map(({ name, type, primary, secondary }) => 
+      loadWithFallback(name, type, primary, secondary)
+    )
+  );
+
+  // Generate final output log
+  scriptResults.outputLog = "<ul>" + scriptResults.messages.join('\n') + "</ul>";
+//  + `\n\nSummary:\nSuccessful: ${scriptResults.loaded.join(', ') || 'None'}\n` + `Failed: ${scriptResults.failed.join(', ') || 'None'}`;
+
+  return scriptResults;
+}
+
+// Usage example with named scripts
+const filesToLoad = [
+  {
+	name: "Solace CSS",
+	type: "css",
+	primary: "css/solace.css",
+	secondary: ""
+  },
+  { 
+    name: "Solace JS-API v" + versions.solaceApi,
+	type: "js",
+    primary: "js/solclient-debug.js",
+    secondary: "js/solclient.js"
+  },
+  {
+    name: "HTMX Framework",
+	type: "js",
+    primary: "js/htmx.min.js",
+    secondary: "https://unpkg.com/htmx.org@2.0.4"
+  }
+];
+
+// Execute and display results
+checkAndLoadScripts(filesToLoad).then(results => {
+  const outputElement = document.getElementById('statusOutput');
+  if (outputElement) {
+    outputElement.innerHTML = results.outputLog;
+  }
+});
+</script>
+</head>
+
+<body class="flex h-screen bg-white-100">
+
+  <aside class="sidebar">
+	<div class="sidesection">
+	  <img class="sidelogo" src="img/logo_white.png">
+	</div>
+    <nav class="sidesection">
+	  <svg width="20px" height="10px" viewBox="0 0 25 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g id="MISC" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <g id="13-copy-5" transform="translate(-11.000000, -123.000000)" stroke="#FFFFFF" stroke-width="2">
+            <path d="M31.9952016,130.247914 C33.7572774,130.86268 35,132.547772 35,134.5 C35,136.983556 32.9991033,139 30.5269855,139 L17.069416,139 C14.2734986,139 12,136.765582 12,134.000536 C12,131.989799 13.212281,130.222741 15.0006635,129.434801 C15.0403058,127.489198 16.8510217,126 19,126 C19.5433077,126 20.0722122,126.094878 20.5600026,126.274879 C21.7768926,124.851975 23.5660888,124 25.5,124 C29.0054369,124 31.8627618,126.774896 31.9952016,130.247914 Z" id="I_VPN" transform="translate(23.500000, 131.500000) scale(-1, 1) translate(-23.500000, -131.500000) "></path>
+          </g>
+        </g>
+      </svg>
+	  Messaging
+	  <ul>
+	    <li class="selected">Queue Browser</li>
+	  </ul>
+      <!--button class="w-full text-left px-4 py-2 rounded hover:bg-gray-200 bg-gray-100 font-semibold"
+              hx-get="/load-queue-browser"
+              hx-target="#main-content"
+              hx-swap="morphdom">
+        Queue Browser
+      </button-->
+    </nav>
+	<div class="sidesection version">
+	  <script>
+	    document.write(`Solace Web Utility v${versions.swu}`);
+		if (!versions.isHosted) {
+		  document.write("<br>(Local Mode)");
+		}
+	  </script>
+	</div>
+    <div class="sidesection startuplog" id="statusOutput"></div>
+  </aside>
+  <main>
+    
+  </main>
+  
+</body>
+</html>
