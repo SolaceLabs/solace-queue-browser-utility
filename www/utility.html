@@ -43,6 +43,7 @@ function loadFile(type, url) {
     if (type == "js") {
       const script = document.createElement('script');
       script.src = url;
+	  script.async = true;
       script.onload = () => resolve();
       script.onerror = () => reject();
       document.head.appendChild(script);
@@ -107,12 +108,6 @@ const filesToLoad = [
 	type: "js",
     primary: "js/solclient-debug.js",
     secondary: "js/solclient.js"
-  },
-  {
-    name: "HTMX Framework",
-	type: "js",
-    primary: "js/htmx.min.js",
-    secondary: "https://unpkg.com/htmx.org@2.0.4"
   }
 ];
 
@@ -123,6 +118,9 @@ checkAndLoadScripts(filesToLoad).then(results => {
     outputElement.innerHTML = results.outputLog;
   }
 });
+</script>
+<script defer>
+
 </script>
 </head>
 
@@ -142,11 +140,11 @@ checkAndLoadScripts(filesToLoad).then(results => {
       </svg>
 	  Messaging
 	  <ul>
-	    <li class="selected">Queue Browser</li>
+	    <li class="selected" hx-get="browser.html" hx-target="main">Queue Browser</li>
 	  </ul>
       <!--button class="w-full text-left px-4 py-2 rounded hover:bg-gray-200 bg-gray-100 font-semibold"
-              hx-get="/load-queue-browser"
-              hx-target="#main-content"
+              hx-get="browser.html"
+              hx-target="#main"
               hx-swap="morphdom">
         Queue Browser
       </button-->
@@ -161,9 +159,293 @@ checkAndLoadScripts(filesToLoad).then(results => {
 	</div>
     <div class="sidesection startuplog" id="statusOutput"></div>
   </aside>
-  <main>
-    
+  <main id="main">
+    <section class="login" style="flex:0 1 auto;min-height:10px">
+	  <!--header class="title">Solace PubSub+ Broker Client Connection</header-->
+	  <details id="clientConnection" open>
+	    <summary>
+		  Solace PubSub+ Broker Client Connection
+		  <svg id="clientConnStatus" version="1.0" xmlns="http://www.w3.org/2000/svg"  width="15px" height="15px" viewBox="0 0 1300 1300">
+            <path fill="#D00000" d="M1140,100 l-53,50 -43,-21 c-107,-55 -226,-30 -332,70 l-62,58 -33,-29 c-49,-44 -92,-35 -92,21 0,18 18,43 60,85 l60,59 -85,86 c-86,86 -102,119 -73,148 25,25 53,10 140,-75 l89,-87 61,62 62,61 -87,89 c-48,49 -87,95 -87,101 0,28 22,51 48,51 21,0 47,-20 112,-85 l84,-84 67,64 c37,36 71,65 76,65 19,0 53,-32 53,-50 0,-11 -13,-34 -29,-52 l-29,-33 58,-62 c100,-106 125,-225 70,-332 l-21,-43 50,-53 c28,-30 51,-58 51,-62 0,-17 -32,-53 -46,-53 -8,0 -39,23 -69,51z"/>
+            <path fill="#D00000" d="M220,540 c-30,21 -28,47 7,86 l29,33 -58,62 c-100,106 -125,225 -70,332 l21,43 -50,53 c-28,30 -51,58 -51,62 0,17 32,53 46,53 8,0 39,-23 69,-51 l53,-50 43,21 c107,55 226,30 332,-70 l62,-58 33,29 c49,44 92,35 92,-21 0,-20 -54,-79 -258,-283 -142,-141 -262,-257 -268,-257 -5,0 -20,7 -32,16z"/>
+            <path fill="#F00000" d="M950,850 c-23,19 -209,367 -205,385 3,15 26,17 221,20 185,2 218,0 223,-13 6,-16 -194,-392 -213,-399 -6,-3 -18,1 -26,7z m53,182 l0,65 -35,0 -35,0 0,-65 0,-65 35,0 35,0 0,65z m-2,132 c3,32 2,33 -32,33 -33,0 -36,-3 -36,-28 0,-16 3,-32 7,-36 4,-4 19,-6 33,-4 20,2 26,9 28,35z"/>
+          </svg>
+		</summary>
+		
+		<blockquote style="display:none">
+          <button onClick="document.getElementById('clientConnStatus').innerHTML=document.getElementById('connected').innerHTML">Connect</button>
+		  <svg id="connected" version="1.0" xmlns="http://www.w3.org/2000/svg"  width="15px" height="15px" viewBox="0 0 1300 1300">
+            <path fill="var(--sol-mid-green)" d="M1090,140 l-126,124 -40,-20 c-24,-13 -67,-23 -106,-26 -57,-4 -75,-1 -123,21 -31,15 -83,51 -115,81 l-58,56 -28,-30 c-43,-44 -95,-36 -95,15 0,28 507,535 536,535 50,0 58,-52 14,-95 l-30,-28 56,-58 c30,-32 66,-84 81,-115 22,-48 25,-66 21,-123 -3,-39 -14,-83 -26,-107 l-21,-41 115,-114 c64,-63 120,-122 125,-132 13,-22 -13,-67 -38,-67 -9,0 -73,56 -142,124z"/>
+            <path fill="var(--sol-mid-green)" d="M330,420 c-20,20 -13,53 18,83 l30,28 -56,58 c-30,32 -66,84 -81,115 -22,48 -25,66 -21,123 3,39 14,83 26,107 l21,41 -115,114 c-64,63 -120,122 -125,132 -13,22 13,67 38,67 9,0 73,-56 142,-124 l126,-124 40,20 c24,13 67,23 106,26 57,4 75,1 123,-21 31,-15 83,-51 115,-81 l58,-56 28,30 c43,44 95,36 95,-15 0,-28 -507,-535 -536,-535 -11,0 -25,5 -32,12z"/>
+          </svg>
+          <button onClick="document.getElementById('clientConnStatus').innerHTML=document.getElementById('disconnected').innerHTML">Disconnect</button>
+		  <svg id="disconnected" version="1.0" xmlns="http://www.w3.org/2000/svg"  width="15px" height="15px" viewBox="0 0 1300 1300">
+            <path fill="#D00000" d="M1140,100 l-53,50 -43,-21 c-107,-55 -226,-30 -332,70 l-62,58 -33,-29 c-49,-44 -92,-35 -92,21 0,18 18,43 60,85 l60,59 -85,86 c-86,86 -102,119 -73,148 25,25 53,10 140,-75 l89,-87 61,62 62,61 -87,89 c-48,49 -87,95 -87,101 0,28 22,51 48,51 21,0 47,-20 112,-85 l84,-84 67,64 c37,36 71,65 76,65 19,0 53,-32 53,-50 0,-11 -13,-34 -29,-52 l-29,-33 58,-62 c100,-106 125,-225 70,-332 l-21,-43 50,-53 c28,-30 51,-58 51,-62 0,-17 -32,-53 -46,-53 -8,0 -39,23 -69,51z"/>
+            <path fill="#D00000" d="M220,540 c-30,21 -28,47 7,86 l29,33 -58,62 c-100,106 -125,225 -70,332 l21,43 -50,53 c-28,30 -51,58 -51,62 0,17 32,53 46,53 8,0 39,-23 69,-51 l53,-50 43,21 c107,55 226,30 332,-70 l62,-58 33,29 c49,44 92,35 92,-21 0,-20 -54,-79 -258,-283 -142,-141 -262,-257 -268,-257 -5,0 -20,7 -32,16z"/>
+            <path fill="#F00000" d="M950,850 c-23,19 -209,367 -205,385 3,15 26,17 221,20 185,2 218,0 223,-13 6,-16 -194,-392 -213,-399 -6,-3 -18,1 -26,7z m53,182 l0,65 -35,0 -35,0 0,-65 0,-65 35,0 35,0 0,65z m-2,132 c3,32 2,33 -32,33 -33,0 -36,-3 -36,-28 0,-16 3,-32 7,-36 4,-4 19,-6 33,-4 20,2 26,9 28,35z"/>
+		  </svg>
+          <button onClick="document.getElementById('clientConnStatus').innerHTML=document.getElementById('connecting').innerHTML">Connecting</button>
+          <svg id="connecting" width="15px" height="15px" viewBox="0 0 1300 1300" xmlns="http://www.w3.org/2000/svg">
+            <g fill="var(--sol-dark-green)">
+              <rect x="550" y="1" width="200" height="350" opacity=".1"/>
+              <rect x="550" y="1" width="200" height="350" transform="rotate(45 650 650)" opacity=".25"/>
+              <rect x="550" y="1" width="200" height="350" transform="rotate(90 650 650)" opacity=".5"/>
+              <rect x="550" y="1" width="200" height="350" transform="rotate(135 650 650)" opacity=".75"/>
+              <rect x="550" y="1" width="200" height="350" transform="rotate(180 650 650)" opacity="1.00"/>
+              <animateTransform attributeName="transform" type="rotate" calcMode="discrete" dur="0.9s" values="0 650 650;45 650 650;90 650 650;135 650 650;180 650 650;225 650 650;270 650 650;315 650 650;360 650 650" repeatCount="indefinite"/>
+            </g>
+          </svg>
+		</blockquote>
+		<form>
+		<input class="loginfield" type="text" name="clientHost" id="clientHost" placeholder="Broker URL (e.g. wss://localhost:1443)" required><input class="loginfield" type="text" name="clientUser" id="clientUser" placeholder="Client Username" required><input class="loginfield" type="password" name="clientPass" id="clientPass" placeholder="Client Password" required><input class="loginfield" type="text" name="clientVpn" id="clientVpn" placeholder="Message VPN" required><input class="loginfield" type="text" name="clientQueue" id="clientQueue" placeholder="Queue Name" required>
+
+		</form>
+		<p class="align-right">
+		  <input name="clientConnect" id="clientConnect" type="button" value="Connect" style="height:30px">
+		</p>
+		<textarea id="QBLOG" style="width:100%;height:100px;font-size:9px;" readonly></textarea>
+		</details>
+	</section>
+	<section class="messagelist" style="margin-top:0px;margin-bottom:0px">
+	  <header class="title">Queued Messages</header>
+	  <!-- Message ID, Spooled Time, Size -->
+	  <table>
+		<thead>
+		  <tr>
+            <th><input disabled type="checkbox" id="cb-msg"></th>
+		    <th>Message ID</th>
+			<th>Repl Grp Msg ID</th>
+			<th>Message Type</th>
+		    <th>Size</th>
+          </tr>
+		</thead>
+		<tbody id="queuedMessageList">
+		  <tr>
+		    <td colspan=3>Please connect to broker to list messages</td>
+		  </tr>
+		</tbody>
+	  </table>
+	</section>
+	<section class="messagedetails">
+	  <header class="title">View Message</header>
+	  <header class="tabs">
+		<div id="tabText">Text</div>
+		<div id="tabBinary">Binary Text</div>
+		<div id="tabRaw">Raw</div>
+	  </header>
+	  <div>
+        <textarea readonly id="msgText"></textarea>
+	    <textarea readonly id="msgBinary"></textarea>
+	    <textarea readonly id="msgRaw"></textarea>
+	  </div>
+	</section>
   </main>
   
 </body>
+<script id="solace-web-utility">
+function onlyShowText(z) {
+	unShowText();
+	if (typeof z === 'string' || z instanceof String) z = z.toUpperCase();
+	switch (z) {
+		case 3:
+		case "TEXT":
+			document.getElementById("tabText").classList.add("selected");
+			document.getElementById("msgText").style.display = "block";
+			break;
+		case 0:
+		case "BINARY":
+			document.getElementById("tabBinary").classList.add("selected");
+			document.getElementById("msgBinary").style.display = "block";
+			break;
+		case -1:
+		case "RAW":
+			document.getElementById("tabRaw").classList.add("selected");
+			document.getElementById("msgRaw").style.display = "block";
+			break;
+	}
+}
+function unShowText() {
+	document.getElementById("tabText").classList.remove("selected");
+	document.getElementById("tabBinary").classList.remove("selected");
+	document.getElementById("tabRaw").classList.remove("selected");
+	document.getElementById("msgText").style.display = "none";
+	document.getElementById("msgBinary").style.display = "none";
+	document.getElementById("msgRaw").style.display = "none";
+}
+function formatBytes(bytes, decimals = 2) {
+    if (!+bytes) return '0 Bytes'
+
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
+var qbSession = null;
+var queuedMessages = [];
+var sessionEvent = null;
+var clientSessionConnected = false;
+
+window.onload = function() {
+
+	document.getElementById("clientHost").value = "wss://localhost:61443";
+	document.getElementById("clientUser").value = "default";
+	document.getElementById("clientVpn").value = "default";
+	document.getElementById("clientQueue").value = "test";
+	
+	document.getElementById("clientConnect").onclick = function() {
+		if (clientSessionConnected) {
+			qbSession.disconnect();
+		} else {
+			document.getElementById('clientConnStatus').innerHTML=document.getElementById('connecting').innerHTML;
+			this.value = "Connecting...";
+			doConnect();
+		}
+	}
+	function qbLog(z) {
+		dt = new Date();
+		document.getElementById("QBLOG").value = document.getElementById("QBLOG").value + "[" + dt.toISOString() + "] " +z+ "\n";
+		document.getElementById("QBLOG").scrollTop = document.getElementById("QBLOG").scrollHeight;
+	};
+	var solSessionProp = {
+		url:      "wss://localhost:61443",
+		vpnName:  "default",
+		userName: "default",
+		password: "default",
+		connectRetries: 0,
+		connectRetriesPerHost: 0,
+		includeSenderId: true,
+		reconnectRetries: 0,
+		reconnectRetryWaitInMsecs: 0,
+	}
+	var allSessionEvents = [
+		[ solace.SessionEventCode.ACKNOWLEDGED_MESSAGE, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.CAN_ACCEPT_DATA, function() { qbLog("[Session Event] Can accept data again."); }],
+		[ solace.SessionEventCode.CONNECT_FAILED_ERROR, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.DISCONNECTED, function() { qbLog("[Session Event] Disconnected"); doDisconnectCleanup(); }],
+		[ solace.SessionEventCode.DOWN_ERROR, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.GUARANTEED_MESSAGE_PUBLISHER_DOWN, function(evt) { qbLog("[Session Event] " +evt.infoStr); qbSession.disconnect(); }],
+		[ solace.SessionEventCode.MESSAGE, function(msg) { qbLog("[Session Event] Received message[id=" +msg.getGuaranteedMessageId()+ "]"); }],
+		[ solace.SessionEventCode.PROPERTY_UPDATE_ERROR, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.PROPERTY_UPDATE_OK, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.PROVISION_ERROR, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.PROVISION_OK, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.RECONNECTED_NOTICE, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.RECONNECTING_NOTICE, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.REJECTED_MESSAGE_ERROR, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.REPUBLISHING_UNACKED_MESSAGES, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.SUBSCRIPTION_ERROR, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.SUBSCRIPTION_OK, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.UNSUBSCRIBE_TE_TOPIC_ERROR, function(evt) { qbLog("[Session Event] " +evt.infoStr); }],
+		[ solace.SessionEventCode.UNSUBSCRIBE_TE_TOPIC_OK, function() { qbLog("[Session Event] Unsubscribed from Topic"); }],
+		[ solace.SessionEventCode.UP_NOTICE, function() { qbLog("[Session Event] Connected"); }]
+	];
+	var allQueueBrowserEvents = [
+		[ solace.QueueBrowserEventName.CONNECT_FAILED_ERROR, function (evt) { qbLog("[Queue Event] " + evt.message); qbSession.disconnect(); }],
+		[ solace.QueueBrowserEventName.DISPOSED, function () { qbLog("[Queue Event] Queue Browser Session disposed"); qbSession.disconnect(); }],
+		[ solace.QueueBrowserEventName.DOWN, function () { qbLog("[Queue Event] Queue Browser Session down"); qbSession.disconnect(); }],
+		[ solace.QueueBrowserEventName.DOWN_ERROR, function (evt) { qbLog("[Queue Event] " + evt.message); qbSession.disconnect(); }],
+		[ solace.QueueBrowserEventName.GM_DISABLED, function () { qbLog("[Queue Event] Guaranteed Messaging is disabled"); qbSession.disconnect(); }],
+//		solace.QueueBrowserEventName.MESSAGE,
+		[ solace.QueueBrowserEventName.UP, function () { qbLog("[Queue Event] Connected to Queue"); }]
+	];
+	var solQueueBrowserProp = {
+		connectAttempts: 1,
+		connectTimeoutInMsecs: 1000,
+		queueDescriptor: {
+			name: "test",
+			type: solace.QueueType.QUEUE,
+		},
+		windowSize: 1,
+	};
+	var solMessageTypes = [
+		"BINARY",
+		"MAP",
+		"STREAM",
+		"TEXT"
+	];
+	
+	function addMessage(msg) {
+		queuedMessages.push(msg);
+		recDate = msg.getReceiverTimestamp();
+		var htmlTR = document.createElement("tr");
+		htmlTR.id = "msgrow-" +msg.getGuaranteedMessageId().toString();
+		htmlTR.onclick = function() {
+			document.getElementById("msgText").value = msg.getSdtContainer();
+			document.getElementById("msgBinary").value = msg.getBinaryAttachment().toString();
+			document.getElementById("msgRaw").value = msg.dump();
+			onlyShowText(msg.getType());
+		};
+		htmlTR.innerHTML = "<td><input disabled type=\"checkbox\" id=\"cb-msg-" +msg.getGuaranteedMessageId().toString()+ "\"></td>"+
+			"<td>" +msg.getGuaranteedMessageId().toString()+ "</td>" +
+			"<td>" +msg.getReplicationGroupMessageId().toString()+ "</td>" +
+			"<td>" +solMessageTypes[msg.getType()]+ "</td>"+
+			"<td>" +formatBytes(msg.getBinaryAttachment().length)+ "</td>"+
+			"</tr>"
+		document.getElementById("queuedMessageList").appendChild(htmlTR);
+	};
+	unShowText();
+	document.getElementById("tabText").onclick = function() { onlyShowText(3); };
+	document.getElementById("tabBinary").onclick = function() { onlyShowText(0); };
+	document.getElementById("tabRaw").onclick = function() { onlyShowText(-1); };
+	
+	var factoryProps = new solace.SolclientFactoryProperties();
+	factoryProps.profile = solace.SolclientFactoryProfiles.version10;
+	solace.SolclientFactory.init(factoryProps);
+	solace.SolclientFactory.setLogLevel(solace.LogLevel.DEBUG);
+	
+	function doConnect() {
+		try {
+			qbSession = solace.SolclientFactory.createSession({
+				url:      document.getElementById("clientHost").value,
+				vpnName:  document.getElementById("clientVpn").value,
+				userName: document.getElementById("clientUser").value,
+				password: document.getElementById("clientPass").value,
+				connectRetries: 0,
+				connectRetriesPerHost: 0,
+				includeSenderId: true,
+				reconnectRetries: 0,
+				reconnectRetryWaitInMsecs: 0,
+			});
+			for (let [evt, func] of allSessionEvents) {
+				qbSession.on(evt, func);
+			}
+			qbLog("[SessionEvent] " +"Connecting...");
+			qbSession.connect();
+		} catch (err) {
+			qbLog("Queue Browser Session Exception:");
+			qbLog(err.toString());
+			sessionEvent = err;
+		}
+		try {
+			qBrowser = qbSession.createQueueBrowser(solQueueBrowserProp);
+			qBrowser.on(solace.QueueBrowserEventName.MESSAGE, function(msg) {
+				addMessage(msg);
+			});
+			for (let [evt, func] of allQueueBrowserEvents) {
+				qBrowser.on(evt, func);
+			}
+			qBrowser.connect();
+			document.getElementById("queuedMessageList").innerHTML = "";
+			document.getElementById("clientConnect").value = "Disconnect";
+			document.getElementById('clientConnStatus').innerHTML=document.getElementById('connected').innerHTML
+			clientSessionConnected = true;
+		} catch (err) {
+			qbLog("Queue Browser Exception");
+			qbLog(err.toString());
+			sessionEvent = err;
+		}
+	}
+	function doDisconnectCleanup() {
+		clientSessionConnected = false;
+		qbSession = null;
+		document.getElementById("clientConnect").value = "Connect";
+		document.getElementById("clientConnStatus").innerHTML=document.getElementById('disconnected').innerHTML;
+		document.getElementById("queuedMessageList").innerHTML = "";
+		unShowText();
+	}
+}
+</script>
 </html>

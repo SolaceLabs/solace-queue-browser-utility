@@ -2,7 +2,7 @@
 	--sol-green: #00c895;
 	--sol-mid-green: #00AB91;
 	--sol-dark-green: #009191;
-	--lightest-gray: #F0F0F0;
+	--lightest-gray: #E0E0E0;
 	--sol-lite-gray: #DCDEE0;
 	--mid-lite-gray: #909090;
 	--sol-mid-gray: #474747;
@@ -15,13 +15,27 @@ body {
 	height: 100vh;
 	margin: 0px;
 }
+svg {
+	margin: 0px;
+	padding: 0px;
+	vertical-align: middle;
+}
+input {
+	width: 100%;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0px;
+}
 .sidebar {
 	background-color: var(--sol-mid-gray);
 	color: #ffffff;
 
 	box-shadow: 0px 0px 7px -1px #000000;
 	box-sizing: border-box;
-	border-width: 0px;
+	border-color: var(--sol-dark-gray);
+	border-style: solid;
+	border-width: 1px;
 	
 	flex-direction: column;
 	display: flex;
@@ -89,6 +103,90 @@ main {
 	background-color: var(--transparent-gray);
 	border-style: none;
 	border-width: 0px;
+	display: flex;
+	flex-direction: column;
 	flex: 1 1 0%;
 	overflow: auto;
+}
+main section {
+	background-color: #FAFAFA;
+	border-color: var(--sol-dark-gray);
+	border-radius: 5px;
+	border-style: solid;
+	border-width: 1px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	max-width: 1200px;
+	min-height: 300px;
+	margin: 10px;
+	padding: 10px;
+	overflow: auto;
+}
+main section:hover {
+	background-color: #FFF;
+}
+main section details form {
+	display: flex;
+	flex-wrap: wrap;
+}
+main section details summary, main section header {
+	font-size: 12pt;
+	font-weight: bold;
+	margin: 5px 5px 15px 5px;
+}
+section.messagelist tbody#queuedMessageList tr:hover {
+	background-color: var(--sol-lite-gray);
+	cursor: pointer;
+}
+main section thead tr th {
+	padding: 5px;
+}
+main section tbody#queuedMessageList tr td {
+	border-style: none;
+	font-family: monospace;
+	font-size: 10pt;
+	margin: 0px;
+	padding: 3px 10px 3px 10px;
+}
+main section.messagedetails header.tabs {
+	display: flex;
+	flex-wrap: wrap;
+}
+main section.messagedetails header.tabs div {
+	flex: 1 1 100px;
+	max-width: 120px;
+	text-align: center;
+	border-color: var(--sol-dark-green);
+	border-style: none;
+	border-width: 0px 0px 3px 0px;
+	padding: 0px 3px 3px 3px;
+	color: var(--mid-lite-gray);
+}
+main section.messagedetails header.tabs div:hover {
+	color: var(--sol-dark-gray);
+	cursor: pointer;
+}
+main section.messagedetails header.tabs div.selected {
+	color: var(--sol-dark-gray);
+	border-style: solid;
+}
+main section.messagedetails div {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+}
+main section.messagedetails textarea {
+	height: 100%;
+	width: 100%;
+	flex: 1 1 100px;
+}
+input.loginfield {
+	flex: 1 1 200px;
+	font-size: 10pt;
+	min-width: 200px;
+	max-width: 450px;
+	margin: 2px;
+	padding: 0px;
 }
