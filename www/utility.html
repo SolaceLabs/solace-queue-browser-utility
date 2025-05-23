@@ -351,15 +351,6 @@ window.onload = function() {
 //		solace.QueueBrowserEventName.MESSAGE,
 		[ solace.QueueBrowserEventName.UP, function () { qbLog("[Queue Event] Connected to Queue"); }]
 	];
-	var solQueueBrowserProp = {
-		connectAttempts: 1,
-		connectTimeoutInMsecs: 1000,
-		queueDescriptor: {
-			name: "test",
-			type: solace.QueueType.QUEUE,
-		},
-		windowSize: 1,
-	};
 	var solMessageTypes = [
 		"BINARY",
 		"MAP",
@@ -420,7 +411,15 @@ window.onload = function() {
 			sessionEvent = err;
 		}
 		try {
-			qBrowser = qbSession.createQueueBrowser(solQueueBrowserProp);
+			qBrowser = qbSession.createQueueBrowser({
+				connectAttempts: 1,
+				connectTimeoutInMsecs: 1000,
+				queueDescriptor: {
+					name: document.getElementById("clientQueue").value,
+					type: solace.QueueType.QUEUE,
+				},
+				windowSize: 1,
+			});
 			qBrowser.on(solace.QueueBrowserEventName.MESSAGE, function(msg) {
 				addMessage(msg);
 			});
