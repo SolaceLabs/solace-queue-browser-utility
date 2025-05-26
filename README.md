@@ -16,16 +16,14 @@ The application is intended to be able to run without a web server (with constra
 1. Checkout this code repository.
 2. Download Solace Javascript (Browser) API from [here](https://solace.com/downloads/).
    - Place `solclient-debug.js` or `solclient.js` in `www/js` folder.
-3. (Optional) Download HTMX framework from [here](https://htmx.org/).
-   - Place `htmx.min.js` in `www/js` folder.
-4. Either open `www/utility.html` with a browser or run the docker container `docker-compose up -d`.
+3. Either open `www/utility.html` with a browser or run the docker container `docker-compose up -d`.
 
 ## Constraints
 
 1. If you don't have an internet connection or internet access to https://htmx.org/, please complete Step #3.
 2. VPN/Queue listing requires SEMP login credentials (a.k.a adminstrator / operator login credentials).
 3. Features requiring SEMP login credentials require either:
-   - Target Solace PubSub+ Broker must enable [Cross Origin Resource Sharing (CORS)](https://docs.solace.com/Services/Managing-Services.htm#managing-cross-origin-resource-sharing), or
+   - (Not available yet) Target Solace PubSub+ Broker must enable [Cross Origin Resource Sharing (CORS)](https://docs.solace.com/Services/Managing-Services.htm#managing-cross-origin-resource-sharing), or
    - Tool to be deployed and run via Docker container
 
 ## References
