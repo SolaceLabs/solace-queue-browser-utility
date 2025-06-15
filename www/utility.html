@@ -1,53 +1,478 @@
 <html>
 <head>
 <title>Solace Web Utility - Solace Professional Services &copy; 2025</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlcgASZXIAJKVyADJlcgA8JXIAPuVyADflcgAoJXIACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACVyAAhlcgAkJXIAPOVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgAnQAAAAAAAAAAAAAAAAAAAACVyAAhlcgAppXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyADLAAAAAAAAAAAAAAAAlcgAkJXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAJ0AAAAAlcgASZXIAPOVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgAIJXIAJKVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAKCVyADJlcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyADflcgA8JXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA+5XIAPuVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAPCVyADflcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyADJlcgAoJXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgAkpXIACCVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA85XIAEkAAAAAlcgAnZXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAJAAAAAAAAAAAAAAAACVyADLlcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAKaVyAAhAAAAAAAAAAAAAAAAAAAAAJXIAJ2VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA85XIAJCVyAAhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlcgAIJXIAKCVyADflcgA+5XIAPCVyADJlcgAkpXIAEkAAAAAAAAAAAAAAAAAAAAA+B8AAOAHAADAAwAAgAEAAIABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAAgAEAAMADAADgBwAA+B8AAA==">
 <style>
   ul {
-	margin: 0px 0px 0px 0px;
-	padding: 0px;
+    margin: 0px 0px 0px 0px;
+    padding: 0px;
   }  
   li.tick { 
     list-style-type: '\2714';
-	margin: 0px 0px 0px 0px;
-	padding: 0px 0px 0px 3px;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 3px;
   }
   li.tick::marker {
     color: #008000;
   }
   li.cross {
     list-style-type: '\2718';
-	margin: 0px 0px 0px 0px;
-	padding: 0px 0px 0px 3px;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 3px;
   }
   li.cross::marker {
     color: #A00000;
   }
 </style>
 <script>
-versions = {
-  solaceApi: "10.18.0",
-  swu: "1.0.0",
-  isHosted: window.location.protocol.startsWith("http")
-}
+// App static info
+const SolaceWebUtility = {
+  debugMode: 0,
+  version: "1.1.0",
+  date: new Date(2025, 5, 9),
+  solApiLoaded: false,
+  isHosted: window.location.protocol.startsWith("http"),
+  determineDebugMode: function() {
+    let debugParm = (new URLSearchParams(window.location.search)).get("debug");
+    if (typeof debugParm === 'string' || debugParm instanceof String) debugParm = debugParm.toUpperCase();
+    switch (debugParm) {
+      case 1:
+      case "1":
+      case "CONSOLE":
+        SolaceWebUtility.debugMode = 1;
+        break;
+      case 2:
+      case "2":
+      case "DISPLAY":
+        SolaceWebUtility.debugMode = 2;
+        break;
+    };
+  },
+  
+  /*
+    let debugParm = (new URLSearchParams(window.location.search)).get("debug");
+  if (typeof debugParm === 'string' || debugParm instanceof String) debugParm = debugParm.toUpperCase();
+  switch (debugParm) {
+    case 1:
+    case "1":
+    case "CONSOLE":
+      SolaceWebUtility.debugMode = 1;
+      break;
+    case 2:
+    case "2":
+    case "DISPLAY":
+      SolaceWebUtility.debugMode = 2;
+      break;
+  };
 
-const scriptResults = {
-  outputLog: "",
-  loaded: [],
-  failed: [],
-  messages: []
+  */
+  
+  //////////////////////////////////////////////////
+  // Client Session related objects and functions //
+  //////////////////////////////////////////////////
+  clientSession: {
+    session: null,
+    queueBrowser: null,
+    queuedMessages: {},
+    lastSessionEvent: null,
+    clientSessionConnected: false,
+    queueBinded: false,
+    createQueueBrowser: false,
+    queueBindingParameters: {
+      connectAttempts: 1,
+      connectTimeoutInMsecs: 1000,
+      windowSize: 1, // 1-255
+    },
+    sessionConnectionParameters: {
+      connectRetries: 0,
+      connectRetriesPerHost: 0,
+      includeSenderId: true,
+      reconnectRetries: 0,
+      reconnectRetryWaitInMsecs: 0,
+    },
+    
+    // Session Event Handler
+    handleClientSessionEvent: function(eventCode, passedObj) {
+      if (SolaceWebUtility.debugMode)
+        SolaceWebUtility.clientSession.lastSessionEvent = passedObj;
+      switch(eventCode) {
+        case solace.SessionEventCode.ACKNOWLEDGED_MESSAGE:
+          SolaceWebUtility.log(`[Session Event] ACK MSG (${eventCode}) : ${passedObj.infoStr}` );
+          break;
+        
+        case solace.SessionEventCode.CONNECT_FAILED_ERROR:
+          SolaceWebUtility.log(`[Session Event] Connect Failed (${eventCode}) : ${passedObj.reason}` );
+          break;
+        
+        case solace.SessionEventCode.DISCONNECTED:
+          SolaceWebUtility.log(`[Session Event] Disconnected. 1`);
+          SolaceWebUtility.clientSession.disconnected();
+          SolaceWebUtility.ui.clientConnect.showDisconnected();
+          break;
+        
+        case solace.SessionEventCode.DOWN_ERROR:
+          SolaceWebUtility.log(`[Session Event] Disconnected with error: 2 ${passedObj}`);
+          SolaceWebUtility.clientSession.disconnected();
+          SolaceWebUtility.ui.clientConnect.showDisconnected();
+          break;
+        
+        case solace.SessionEventCode.UP_NOTICE:
+          SolaceWebUtility.log(`[Session Event] Connected. 0`);
+          //SolaceWebUtility.clientSession.attemptDisconnectSession();
+          if (SolaceWebUtility.clientSession.createQueueBrowser == "a") {
+            SolaceWebUtility.clientSession.attemptBrowseQueue();
+          }
+          break;
+        
+        default:
+          SolaceWebUtility.log(`[Session Event] UNHANDLED (${eventCode})`);
+          break;
+      }
+    },
+    
+    // Queue Browser Event Handler
+    handleQueueBrowserEvent: function(eventName, passedObj) {
+    // CONNECT_FAILED_ERROR DISPOSED DOWN DOWN_ERROR GM_DISABLED MESSAGE UP
+      if (SolaceWebUtility.debugMode)
+        SolaceWebUtility.clientSession.lastSessionEvent = passedObj;
+      switch(eventName) {
+        case (solace.QueueBrowserEventName.CONNECT_FAILED_ERROR):
+          SolaceWebUtility.log(`[QBrowser Event] Unable to browse queue: 3 ${passedObj}`);
+          SolaceWebUtility.clientSession.attemptDisconnectSession();
+          break;
+        case (solace.QueueBrowserEventName.DISPOSED):
+          SolaceWebUtility.log(`[QBrowser Event] Disposed. 4`);
+          SolaceWebUtility.clientSession.attemptDisconnectSession();
+          break;
+        case (solace.QueueBrowserEventName.DOWN):
+          SolaceWebUtility.log(`[QBrowser Event] Queue disconnected. 5`);
+          SolaceWebUtility.clientSession.attemptDisconnectSession();
+          break;
+        case (solace.QueueBrowserEventName.DOWN_ERROR):
+          SolaceWebUtility.log(`[QBrowser Event] Queue Disconnected remotely: 6 ${passedObj}`);
+          SolaceWebUtility.clientSession.attemptDisconnectSession();
+          break;
+        case (solace.QueueBrowserEventName.GM_DISABLED):
+          SolaceWebUtility.log(`[QBrowser Event] Session cannot perform Guaranteed Messaging. 7`);
+          SolaceWebUtility.clientSession.attemptDisconnectSession();
+          break;
+        case (solace.QueueBrowserEventName.UP):
+          SolaceWebUtility.log(`[QBrowser Event] Queue connected. 8`);
+          SolaceWebUtility.clientSession.connected();
+          SolaceWebUtility.ui.clientConnect.showConnected();
+          break;
+        default:
+          SolaceWebUtility.log(`[QBrowser Event] UNHANDLED (${solace.QueueBrowserEventName.nameOf(eventName)})`);
+          break;
+      }
+    },
+    
+    // fire and forget create queue browser function. updates and handling are all inside event handler
+    attemptBrowseQueue: function() {
+      SolaceWebUtility.log(`[QBrowser Event] Binding to queue...`);
+      SolaceWebUtility.clientSession.createQueueBrowser = false;
+      try {
+        SolaceWebUtility.clientSession.queueBrowser = SolaceWebUtility.clientSession.session.createQueueBrowser({
+          ...SolaceWebUtility.clientSession.queueBindingParameters,
+          queueDescriptor: {
+            name: document.getElementById("clientQueue").value,
+            type: solace.QueueType.QUEUE,
+          },
+        });
+        
+        // map handleQueueBrowserEvent() to all Queue Browser Events
+        for (let evt of solace.QueueBrowserEventName.values) {
+          SolaceWebUtility.clientSession.queueBrowser.on(evt, (solObj) => { SolaceWebUtility.clientSession.handleQueueBrowserEvent(evt, solObj); });
+        }
+        
+        // trying to bind
+        SolaceWebUtility.clientSession.queueBrowser.connect();
+      } catch (err) {
+          SolaceWebUtility.log("[QBrowser Event] " +err);
+      }
+    },
+    // fire and forget connect function. updates and handling are all inside event handler
+    attemptConnectSession: function() {
+      SolaceWebUtility.log("[Session Event] Connecting...");
+      try {
+        SolaceWebUtility.clientSession.createQueueBrowser = true;
+        SolaceWebUtility.clientSession.session = solace.SolclientFactory.createSession({
+          url:		document.getElementById("clientHost").value,
+          vpnName:	document.getElementById("clientVpn").value,
+          userName:	document.getElementById("clientUser").value,
+          password:	document.getElementById("clientPass").value,
+          ...SolaceWebUtility.clientSession.sessionConnectionParameters,
+        });
+        
+        // map handleClientSessionEvent() to all Session Events
+        for (let evt of solace.SessionEventCode.values) {
+          SolaceWebUtility.clientSession.session.on(evt, (solObj) => { SolaceWebUtility.clientSession.handleClientSessionEvent(evt, solObj); });
+        }
+        
+        // trying to connect
+        SolaceWebUtility.clientSession.session.connect();
+        
+      } catch (err) {
+        SolaceWebUtility.log("[Session Event] " +err);
+      }
+    },
+
+    // fire and forget disconnect function. updates and handling are all inside event handler
+    attemptDisconnectSession: function() {
+      SolaceWebUtility.log("[Session Event] Disconnecting...");
+      try {
+        SolaceWebUtility.clientSession.session.disconnect();
+        //SolaceWebUtility.clientSession.session.dispose();
+      } catch (err) {
+        SolaceWebUtility.log("[Session Event] Already disconnected.");
+        SolaceWebUtility.log(`[Session Event] Error: ${err} `);
+      }
+    },
+    
+    // 
+    connected: function() {
+      SolaceWebUtility.clientSession.clientSessionConnected = true;
+    },
+    
+    disconnected: function() {
+      if (SolaceWebUtility.clientSession.session != null)
+        SolaceWebUtility.clientSession.session.dispose();
+      SolaceWebUtility.clientSession.session = null;
+      SolaceWebUtility.clientSession.clientSessionConnected = false;
+      SolaceWebUtility.clientSession.createQueueBrowser = false;
+    },
+  }
 };
+////////////////////////////////////////////////////
+// UI related functions, variables, objects, etc. //
+////////////////////////////////////////////////////
+SolaceWebUtility.ui = {
 
-function loadFile(type, url) {
-  return new Promise((resolve, reject) => {
+  svg: {
+    connSVG: `<path fill="var(--sol-mid-green)" d="M1090,140 l-126,124 -40,-20 c-24,-13 -67,-23 -106,-26 -57,-4 -75,-1 -123,21 -31,15 -83,51 -115,81 l-58,56 -28,-30 c-43,-44 -95,-36 -95,15 0,28 507,535 536,535 50,0 58,-52 14,-95 l-30,-28 56,-58 c30,-32 66,-84 81,-115 22,-48 25,-66 21,-123 -3,-39 -14,-83 -26,-107 l-21,-41 115,-114 c64,-63 120,-122 125,-132 13,-22 -13,-67 -38,-67 -9,0 -73,56 -142,124z"/>  <path fill="var(--sol-mid-green)" d="M330,420 c-20,20 -13,53 18,83 l30,28 -56,58 c-30,32 -66,84 -81,115 -22,48 -25,66 -21,123 3,39 14,83 26,107 l21,41 -115,114 c-64,63 -120,122 -125,132 -13,22 13,67 38,67 9,0 73,-56 142,-124 l126,-124 40,20 c24,13 67,23 106,26 57,4 75,1 123,-21 31,-15 83,-51 115,-81 l58,-56 28,30 c43,44 95,36 95,-15 0,-28 -507,-535 -536,-535 -11,0 -25,5 -32,12z"/>`,
+    dscnSVG: `<path fill="#D00000" d="M1140,100 l-53,50 -43,-21 c-107,-55 -226,-30 -332,70 l-62,58 -33,-29 c-49,-44 -92,-35 -92,21 0,18 18,43 60,85 l60,59 -85,86 c-86,86 -102,119 -73,148 25,25 53,10 140,-75 l89,-87 61,62 62,61 -87,89 c-48,49 -87,95 -87,101 0,28 22,51 48,51 21,0 47,-20 112,-85 l84,-84 67,64 c37,36 71,65 76,65 19,0 53,-32 53,-50 0,-11 -13,-34 -29,-52 l-29,-33 58,-62 c100,-106 125,-225 70,-332 l-21,-43 50,-53 c28,-30 51,-58 51,-62 0,-17 -32,-53 -46,-53 -8,0 -39,23 -69,51z"/>  <path fill="#D00000" d="M220,540 c-30,21 -28,47 7,86 l29,33 -58,62 c-100,106 -125,225 -70,332 l21,43 -50,53 c-28,30 -51,58 -51,62 0,17 32,53 46,53 8,0 39,-23 69,-51 l53,-50 43,21 c107,55 226,30 332,-70 l62,-58 33,29 c49,44 92,35 92,-21 0,-20 -54,-79 -258,-283 -142,-141 -262,-257 -268,-257 -5,0 -20,7 -32,16z"/>  <path fill="#F00000" d="M950,850 c-23,19 -209,367 -205,385 3,15 26,17 221,20 185,2 218,0 223,-13 6,-16 -194,-392 -213,-399 -6,-3 -18,1 -26,7z m53,182 l0,65 -35,0 -35,0 0,-65 0,-65 35,0 35,0 0,65z m-2,132 c3,32 2,33 -32,33 -33,0 -36,-3 -36,-28 0,-16 3,-32 7,-36 4,-4 19,-6 33,-4 20,2 26,9 28,35z"/>`,
+    conntng: `<g fill="var(--sol-dark-green)"><rect x="550" y="1" width="200" height="350" opacity=".1"/><rect x="550" y="1" width="200" height="350" transform="rotate(45 650 650)" opacity=".25"/><rect x="550" y="1" width="200" height="350" transform="rotate(90 650 650)" opacity=".5"/><rect x="550" y="1" width="200" height="350" transform="rotate(135 650 650)" opacity=".75"/><rect x="550" y="1" width="200" height="350" transform="rotate(180 650 650)" opacity="1.00"/><animateTransform attributeName="transform" type="rotate" calcMode="discrete" dur="0.9s" values="0 650 650;45 650 650;90 650 650;135 650 650;180 650 650;225 650 650;270 650 650;315 650 650;360 650 650" repeatCount="indefinite"/></g>`,
+  },
+
+  // function to initialized UI (e.g. add event listeners)
+  init: function() {
+    // add actions to client connect buttons
+    document.getElementById("clientConnectSave").addEventListener("click", function() { SolaceWebUtility.ui.showPopup("Saved connection form", 300, "success"); SolaceWebUtility.ui.clientConnect.save() });
+    document.getElementById("clientConnectLoad").addEventListener("click", function() { SolaceWebUtility.ui.showPopup("Loaded connection form", 300, "success");SolaceWebUtility.ui.clientConnect.load() });
+    document.getElementById("clientConnectClear").addEventListener("click", function() { SolaceWebUtility.ui.showPopup("Cleared connection form", 300, "success"); SolaceWebUtility.ui.clientConnect.clear() });
+    document.getElementById("clientConnect").addEventListener("click", function() { SolaceWebUtility.ui.clientConnect.toggleConnect() });
+    // add actions to tab headers
+    document.getElementById("msgout-tabText").onclick = function() { SolaceWebUtility.ui.showTab(this); };
+    document.getElementById("msgout-tabBinary").onclick = function() { SolaceWebUtility.ui.showTab(this); };
+    document.getElementById("msgout-tabRaw").onclick = function() { SolaceWebUtility.ui.showTab(this); };
+  },
+  // ---------------------------------------------
+  // clientConnect related variables and functions
+  // ---------------------------------------------
+  clientConnect: {
+    fieldDOMs: [ "clientHost", "clientUser", "clientPass", "clientVpn", "clientQueue" ],
+    buttonDOMs: [ "clientConnectSave", "clientConnectLoad", "clientConnectClear" ],
+    disableForm: function() {
+      for (let id of [ ...SolaceWebUtility.ui.clientConnect.fieldDOMs, ...SolaceWebUtility.ui.clientConnect.buttonDOMs ])
+        document.getElementById(id).disabled = true;
+    },
+    enableForm: function() {
+      for (let id of [ ...SolaceWebUtility.ui.clientConnect.fieldDOMs, ...SolaceWebUtility.ui.clientConnect.buttonDOMs ])
+        document.getElementById(id).disabled = false;
+    },
+    load: function() {
+      for (let id of SolaceWebUtility.ui.clientConnect.fieldDOMs)
+        document.getElementById(id).value = localStorage.getItem(id);
+      SolaceWebUtility.log("Loaded stored Client Connection parameters. If form is empty, either the stored values are overwritten with blank values or they have been cleared.");
+    },
+    save: function() {
+      for (let id of SolaceWebUtility.ui.clientConnect.fieldDOMs)
+        localStorage.setItem(id, document.getElementById(id).value);
+      SolaceWebUtility.log("Saved Client Connection parameters. Click 'Load' to test.");
+    },
+    clear: function() {
+      for (let id of SolaceWebUtility.ui.clientConnect.fieldDOMs)
+        document.getElementById(id).value = "";
+      SolaceWebUtility.log("Cleared Client Connection form.");
+    },
+    showConnected: function() {
+      SolaceWebUtility.ui.showPopup("Connected", 300, "success");
+      document.getElementById("clientConnect").textContent = "Disconnect";
+      document.getElementById("clientConnect").classList.remove("connect");
+      document.getElementById("clientConnect").classList.add("disconnect");
+      SolaceWebUtility.ui.clientConnect.disableForm();
+      document.getElementById("clientConnectStatus").innerHTML = SolaceWebUtility.ui.svg.connSVG;
+    },
+    showDisconnected: function() {
+      document.getElementById("clientConnect").textContent = "Connect";
+      document.getElementById("clientConnect").classList.remove("disconnect");
+      document.getElementById("clientConnect").classList.add("connect");
+      SolaceWebUtility.ui.clientConnect.enableForm();
+      document.getElementById("clientConnectStatus").innerHTML = SolaceWebUtility.ui.svg.dscnSVG;
+      // clear message list
+      // clear message body tabs
+      // update status svg
+      // unlock client connect fields
+    },
+    toggleConnect: function() {
+      // if client session is connected - attempt disconnect
+      if (SolaceWebUtility.clientSession.clientSessionConnected) {
+        SolaceWebUtility.ui.showPopup("Disconnecting...", 300, "info");
+        document.getElementById("clientConnectStatus").innerHTML = SolaceWebUtility.ui.svg.conntng;
+        SolaceWebUtility.clientSession.attemptDisconnectSession();
+      }
+      
+      // if client session is not connected - attempt connect
+      else {
+        SolaceWebUtility.ui.showPopup("Connecting...", 300, "info");
+        SolaceWebUtility.ui.clientConnect.disableForm();
+        document.getElementById("clientConnectStatus").innerHTML = SolaceWebUtility.ui.svg.conntng;
+        SolaceWebUtility.clientSession.attemptConnectSession();
+      }
+    }
+  },
+  //-------------------------
+  // function related to tabs
+  //-------------------------
+  /* Explanation of how "Tabs" work.
+  
+  DOM elements for Tabs functionality:
+    - Tab Header Container (THC)
+      - Must be the parent DOM for Tab Headers
+    - Tab Headers
+      - Identified by class="tab-header"
+      - Must have attribute (tab-target-group=<tab-group>) to draw correlation with tab body DOMs
+    - Tab Body Container (TBC)
+      - Must be the parent DOM for Tab Bodies
+    - Tab Body
+      - Requires id=<tab-id> where <tab-id> is a unique DOM id
+      - Identified by class="tab-body"
+      - Requires attribute tab-group=<tab-group> to group DOMs in the same tab group
+    
+  For tabs to work, all 4 DOM elements above (along with the appropriate class names
+  and tab-target-group attributes) must be defined. The tab-related functions depends
+  on the class names and the id of TBC to correct highlight, show, and hide the
+  corresponding tab elements.
+  
+  */
+  
+  // unselected all tab headers
+  resetTabHeaders: function(tabHeaderContainer) {
+    // get all DOMs that have "tab-selected" class within the container
+    const children = tabHeaderContainer.getElementsByClassName("tab-selected");
+    for (child of children) {
+      child.classList.remove("tab-selected");
+    }
+  },
+  
+  // hide all tab bodies
+  hideAllTabs: function(tabBodyContainer) {
+    // get all DOMs that have "tab-body" class within the Tab Body Container
+    const children = tabBodyContainer.getElementsByClassName("tab-body");
+    for (child of children) {
+      child.classList.add("hidden");
+    }
+  },
+  
+  // function when tab header is clicked
+  showTab: function(tabHeader) {
+    SolaceWebUtility.ui.resetTabHeaders(tabHeader.parentElement);
+    const tabBodyContainer = document.getElementById(tabHeader.getAttribute("tab-target")).parentElement;
+    SolaceWebUtility.ui.hideAllTabs(tabBodyContainer);
+    tabHeader.classList.add("tab-selected");
+    document.getElementById(tabHeader.getAttribute("tab-target")).classList.remove("hidden");
+  },
+  //--------------------------------------
+  // generic function to show notification
+  //--------------------------------------
+  showPopup: function(msg, duration = 1000, type = "info") {
+    // ENUMS are based on css classes: bgsuccess, bgwarn, bgerror
+    // hence enums are "success" "warn" "error", with "info" additionally as an exception:
+    // "info" will not have a progress bar animation at the bottome of the popup
+    type = type.toLowerCase();
+    const popMsg = document.createElement("div");
+    popMsg.classList.add("popup");
+    popMsg.textContent = msg;
+    const popBar = document.createElement("div");
+    popBar.classList.add("progress-bar")
+    popBar.classList.add("bg" +type); // valid types are error, info, success, warn
+    popBar.style.transitionDuration = `${duration}ms`;
+    
+    if (type != "info")
+      popMsg.appendChild(popBar);
+    
+    document.body.appendChild(popMsg);
+    popMsg.style.opacity = "0.9";
+    if (type != "info") {
+      popBar.offsetWidth; // this line is required to ensure DOM is rendered before shrink-ed
+      popBar.classList.add("shrink-progress-bar");
+    }
+    setTimeout(() => {
+      popMsg.style.opacity = "0";
+      setTimeout(() => {
+        popMsg.remove();
+      }, 300);
+    }, duration);
+  },
+  //---------------------
+  // Message List related
+  //---------------------
+  // function to update message downloaded count in ui
+  updateMessagesDownloaded: function() {
+    document.getElementById("msgCount").textContent = (SolaceWebUtility.clientSession.queuedMessages) ? keys(SolaceWebUtility.clientSession.queuedMessages).length : 0;
+  },
+  
+  // function to update message display count in ui
+  updateMessagesDisplayed: function() {
+    document.getElementById("msgDisplayCount").textContent = document.getElementById("queuedMessageList").getElementsByClassName("message-row").length;
+  },
+  
+  // function to update message session status count in ui
+  updateMessageStatus: function() {
+    if (SolaceWebUtility.clientSession.clientSessionConnected) {
+      document.getElementById("msgStatus").textContent = "add logic...";
+    } else
+      document.getElementById("msgStatus").textContent = "Disconnected";
+  },
+}
+///////////////////////////////////////////////////////////////////////////////////
+// Dynamic Loading related functionality for loading scripts and css stylesheets //
+///////////////////////////////////////////////////////////////////////////////////
+SolaceWebUtility.dyLoad = {
+  // list of files to load. this provides a way to provide multiple secondary/backup filepaths in case the first fails.
+  filesToLoad: {
+  
+    // solace api urls - only first successful url will be loaded
+    solaceAPI: [
+//    "js/solclientjs-bundle.js",
+    "js/solclient-debug.js",
+    "js/solclient.js"
+    ],
+    
+    // other scripts / css files to be loaded should be placed here.
+    others: [
+      {
+        name: "Solace CSS",
+        type: "css",
+        urls: [
+          "css/solace.css"
+        ]
+      }
+    ]
+  },
+  
+  // basic function to load files, currently only supports js and css
+  loadFile: function(type, url) {
+    return new Promise((resolve, reject) => {
     if (type == "js") {
       const script = document.createElement('script');
       script.src = url;
-	  script.async = true;
-      script.onload = () => resolve();
-      script.onerror = () => reject();
+      //script.async = true;
+      script.onload = resolve;
+      script.onerror = reject;
       document.head.appendChild(script);
-	} else if (type == "css") {
+    } else if (type == "css") {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.type = 'text/css';
@@ -55,466 +480,401 @@ function loadFile(type, url) {
       link.onload = () => resolve();
       link.onerror = () => reject();
       document.head.appendChild(link);
-	}
-  });
-}
+    }
+    });
+  }
+};
 
-async function loadWithFallback(name, type, primaryUrl, secondaryUrl) {
-  try {
-    await loadFile(type, primaryUrl);
-    scriptResults.loaded.push(name);
-    scriptResults.messages.push(`<li class="tick"> Loaded ${name}</li>`);
-    return true;
-  } catch (primaryError) {
+// function to call loadFile and loop through all urls
+SolaceWebUtility.dyLoad.loadWithFallback = async function(name, type, urls) {
+  for (let url of urls) {
     try {
-	  if (secondaryUrl.length == 0)
-	    throw new Error("No Secondary Url");
-      await loadFile(type, secondaryUrl);
-      scriptResults.loaded.push(name);
-    scriptResults.messages.push(`<li class="tick"> Loaded ${name} (via url)</li>`);
+      await SolaceWebUtility.dyLoad.loadFile(type, url);
+      SolaceWebUtility.log("[Script/CSS] Loaded " +name+ " via " +url);
       return true;
-    } catch (secondaryError) {
-      scriptResults.failed.push(name);
-      scriptResults.messages.push(`<li class="cross">Failed to load ${name}</li>`);
-      return false;
+    } catch (err) {
+      // do nothing if fail to let loop continue
+      SolaceWebUtility.log("[Script/CSS] Unable to load " +name+ " via " +url);
     }
   }
+  SolaceWebUtility.log("[Script/CSS] Unable to load " +name);
+  return false;
+};
+
+// function to load Solace Javascript API js files
+SolaceWebUtility.dyLoad.loadSolApi = function() {
+  SolaceWebUtility.dyLoad.loadWithFallback("Solace Javascript API", "js", SolaceWebUtility.dyLoad.filesToLoad.solaceAPI)
+    .then(loaded => {
+    SolaceWebUtility.solApiLoaded = loaded;
+    if (SolaceWebUtility.solApiLoaded)
+      SolaceWebUtility.init();
+    else {
+    document.write("<h2>Failed to load Solace API.</h2>");
+    document.write("<p><code>solclient.js</code> or <code>solclient-full.js</code> is expected to be in <code>js</code> folder</p>");
+    document.write("<p>Please go to <a href=\"https://solace.com/downloads/?fwp_downloads_types=messaging-apis-and-protocols\">Solace.com Downloads</a> and download <b>Javascript (Browser)</b> API.</p>");
+    document.write(`<p>
+        Alternatively replace the pathname with a full URL path to <code>solclient.js</code> in:<br>
+        <li style="margin-left:20px;"><code>SolaceWebUtility.dyLoad.filesToLoad.solaceAPI</code></li>
+        <quote style="margin-left:40px;color:#AAA">You can search for <code>SolaceWebUtility.dyLoad</code> in the file to locate the variable to update.</quote>
+        </p>`);
+    window.stop();
+    throw new Error("Failed to load Solace API.");
+    }
+  })
+  .catch(err => {
+    // do nothing as loadWithFallback() doesn't throw errors
+  });
+};
+
+// overall wrapper function to call loadWithFallback for every file in "SolaceWebUtility.dyLoad.filesToLoad.others" to load
+SolaceWebUtility.dyLoad.loadAllFiles = function() {
+  for (let file of SolaceWebUtility.dyLoad.filesToLoad.others) {
+    SolaceWebUtility.dyLoad.loadWithFallback(file.name, file.type, file.urls);
+  }
+};
+
+///////////////////////////////////////////////////////////////////////////////////////
+// Solace Web Utility initialization - Solace Javascript API needs to be initialized //
+///////////////////////////////////////////////////////////////////////////////////////
+SolaceWebUtility.init = function() {
+  SolaceWebUtility.log("[Solace API] Initializing " + solace.Version.summary);
+  const factoryProps = new solace.SolclientFactoryProperties();
+  factoryProps.profile = solace.SolclientFactoryProfiles.version10;
+  solace.SolclientFactory.init(factoryProps);
+  solace.SolclientFactory.setLogLevel(solace.LogLevel.DEBUG);
+  
+
+  const allQueueBrowserEvents = [
+    [ solace.QueueBrowserEventName.CONNECT_FAILED_ERROR, function (evt) { SolaceWebUtility.log("[Queue Event] " + evt.message); qbSession.disconnect(); }],
+    [ solace.QueueBrowserEventName.DISPOSED, function () { SolaceWebUtility.log("[Queue Event] Queue Browser Session disposed"); qbSession.disconnect(); }],
+    [ solace.QueueBrowserEventName.DOWN, function () { SolaceWebUtility.log("[Queue Event] Queue Browser Session down"); qbSession.disconnect(); }],
+    [ solace.QueueBrowserEventName.DOWN_ERROR, function (evt) { SolaceWebUtility.log("[Queue Event] " + evt.message); qbSession.disconnect(); }],
+    [ solace.QueueBrowserEventName.GM_DISABLED, function () { SolaceWebUtility.log("[Queue Event] Guaranteed Messaging is disabled"); qbSession.disconnect(); }],
+//    solace.QueueBrowserEventName.MESSAGE,
+    [ solace.QueueBrowserEventName.UP, function () { SolaceWebUtility.log("[Queue Event] Connected to Queue"); }]
+  ];
 }
+//////////////////////////////
+// generic logging function //
+//////////////////////////////
+SolaceWebUtility.log = function(txt) {
+  const dt = null;
+  if (SolaceWebUtility.debugMode == 1) {
+    console.log("[" + SolaceWebUtility.commFuncs.nowDateString() + "] " +txt);
+  } else if (SolaceWebUtility.debugMode == 2) {
+    document.getElementById("swuLog").innerHTML = document.getElementById("swuLog").innerHTML + "[" + SolaceWebUtility.commFuncs.nowDateString() + "] " +txt+ "\n";
+    document.getElementById("swuLog").scrollTop = document.getElementById("swuLog").scrollHeight;
+  }
+};
 
-async function checkAndLoadScripts(scripts) {
-  const results = await Promise.allSettled(
-    scripts.map(({ name, type, primary, secondary }) => 
-      loadWithFallback(name, type, primary, secondary)
-    )
-  );
+//////////////////////////////
+// Common Generic Functions //
+//////////////////////////////
 
-  // Generate final output log
-  scriptResults.outputLog = "<ul>" + scriptResults.messages.join("") + "</ul>";
-//  + `\n\nSummary:\nSuccessful: ${scriptResults.loaded.join(', ') || 'None'}\n` + `Failed: ${scriptResults.failed.join(', ') || 'None'}`;
+// size format function
+SolaceWebUtility.commFuncs = {
+  formatBytes: function (bytes, decimals = 2) {
+    if (!+bytes) return '0 Bytes'
 
-  return scriptResults;
-}
-
-// Usage example with named scripts
-const filesToLoad = [
-  {
-	name: "Solace CSS",
-	type: "css",
-	primary: "css/solace.css",
-	secondary: ""
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
   },
-  { 
-    name: "Solace JS-API v" + versions.solaceApi,
-	type: "js",
-    primary: "js/solclient-debug.js",
-    secondary: "js/solclient.js"
+  nowDate: function () {
+    return new Date();
+  },
+  nowDateString: function() {
+    return new Date().toISOString();
   }
-];
+}
+//////////////////////////////////////////////
+// functions to execute when page is loaded //
+//////////////////////////////////////////////
+window.addEventListener('DOMContentLoaded', () => {
 
-// Execute and display results
-checkAndLoadScripts(filesToLoad).then(results => {
-  const outputElement = document.getElementById('statusOutput');
-  if (outputElement) {
-    outputElement.innerHTML = results.outputLog;
+  // determine debug mode - must be executed in front of all other steps
+  SolaceWebUtility.determineDebugMode();
+  
+  // add log container if debugMode = 2 - must be executed in front of all other steps
+  if (SolaceWebUtility.debugMode == 2) {
+    const mainBody = document.getElementsByClassName("main-body");
+    if (mainBody.length > 0) {
+      console.log("Adding debug log section to 'main-body'");
+      logSec = document.createElement("section");
+      logSec.classList.add("section-main");
+      logSec.classList.add("no-flex-item");
+      logSec.innerHTML = `<div id="swuLog" class="log-style swu-log-height border"></div>`
+      mainBody[0].appendChild(logSec);
+    } else {
+      console.log("'main-body' class container is not found. Reverting back to console log. Debug Mode =1");
+      SolaceWebUtility.debugMode = 1;
+    }
+  };
+
+  // call function to load scripts and css
+  SolaceWebUtility.dyLoad.loadSolApi();
+  SolaceWebUtility.dyLoad.loadAllFiles();
+  
+  // added web app info
+  document.getElementById("suw-info").innerHTML = `Solace Web Utility v${SolaceWebUtility.version}` + ((SolaceWebUtility.isHosted) ? "" : "<br>(Local Mode)");
+
+  // ensure side navigation menu minimum height matches with the main sections
+  window.onresize = function() {
+    document.getElementById("main-navi").style.minHeight = document.getElementById("main-body").offsetHeight;
   }
+  
+  // init UI related actions
+  SolaceWebUtility.ui.init();
+
+  // load saved values
+  SolaceWebUtility.ui.clientConnect.load()
+
 });
-</script>
-<script defer>
 
 </script>
 
 <!-- preloaded svg images -->
 <div style="display:none">
   <svg id="ico-connected" version="1.0" xmlns="http://www.w3.org/2000/svg"  width="15px" height="15px" viewBox="0 0 1300 1300">
-	<path fill="var(--sol-mid-green)" d="M1090,140 l-126,124 -40,-20 c-24,-13 -67,-23 -106,-26 -57,-4 -75,-1 -123,21 -31,15 -83,51 -115,81 l-58,56 -28,-30 c-43,-44 -95,-36 -95,15 0,28 507,535 536,535 50,0 58,-52 14,-95 l-30,-28 56,-58 c30,-32 66,-84 81,-115 22,-48 25,-66 21,-123 -3,-39 -14,-83 -26,-107 l-21,-41 115,-114 c64,-63 120,-122 125,-132 13,-22 -13,-67 -38,-67 -9,0 -73,56 -142,124z"/>
-	<path fill="var(--sol-mid-green)" d="M330,420 c-20,20 -13,53 18,83 l30,28 -56,58 c-30,32 -66,84 -81,115 -22,48 -25,66 -21,123 3,39 14,83 26,107 l21,41 -115,114 c-64,63 -120,122 -125,132 -13,22 13,67 38,67 9,0 73,-56 142,-124 l126,-124 40,20 c24,13 67,23 106,26 57,4 75,1 123,-21 31,-15 83,-51 115,-81 l58,-56 28,30 c43,44 95,36 95,-15 0,-28 -507,-535 -536,-535 -11,0 -25,5 -32,12z"/>
+  <path fill="var(--sol-mid-green)" d="M1090,140 l-126,124 -40,-20 c-24,-13 -67,-23 -106,-26 -57,-4 -75,-1 -123,21 -31,15 -83,51 -115,81 l-58,56 -28,-30 c-43,-44 -95,-36 -95,15 0,28 507,535 536,535 50,0 58,-52 14,-95 l-30,-28 56,-58 c30,-32 66,-84 81,-115 22,-48 25,-66 21,-123 -3,-39 -14,-83 -26,-107 l-21,-41 115,-114 c64,-63 120,-122 125,-132 13,-22 -13,-67 -38,-67 -9,0 -73,56 -142,124z"/>
+  <path fill="var(--sol-mid-green)" d="M330,420 c-20,20 -13,53 18,83 l30,28 -56,58 c-30,32 -66,84 -81,115 -22,48 -25,66 -21,123 3,39 14,83 26,107 l21,41 -115,114 c-64,63 -120,122 -125,132 -13,22 13,67 38,67 9,0 73,-56 142,-124 l126,-124 40,20 c24,13 67,23 106,26 57,4 75,1 123,-21 31,-15 83,-51 115,-81 l58,-56 28,30 c43,44 95,36 95,-15 0,-28 -507,-535 -536,-535 -11,0 -25,5 -32,12z"/>
   </svg>
   <svg id="ico-disconnected" version="1.0" xmlns="http://www.w3.org/2000/svg"  width="15px" height="15px" viewBox="0 0 1300 1300">
-	<path fill="#D00000" d="M1140,100 l-53,50 -43,-21 c-107,-55 -226,-30 -332,70 l-62,58 -33,-29 c-49,-44 -92,-35 -92,21 0,18 18,43 60,85 l60,59 -85,86 c-86,86 -102,119 -73,148 25,25 53,10 140,-75 l89,-87 61,62 62,61 -87,89 c-48,49 -87,95 -87,101 0,28 22,51 48,51 21,0 47,-20 112,-85 l84,-84 67,64 c37,36 71,65 76,65 19,0 53,-32 53,-50 0,-11 -13,-34 -29,-52 l-29,-33 58,-62 c100,-106 125,-225 70,-332 l-21,-43 50,-53 c28,-30 51,-58 51,-62 0,-17 -32,-53 -46,-53 -8,0 -39,23 -69,51z"/>
-	<path fill="#D00000" d="M220,540 c-30,21 -28,47 7,86 l29,33 -58,62 c-100,106 -125,225 -70,332 l21,43 -50,53 c-28,30 -51,58 -51,62 0,17 32,53 46,53 8,0 39,-23 69,-51 l53,-50 43,21 c107,55 226,30 332,-70 l62,-58 33,29 c49,44 92,35 92,-21 0,-20 -54,-79 -258,-283 -142,-141 -262,-257 -268,-257 -5,0 -20,7 -32,16z"/>
-	<path fill="#F00000" d="M950,850 c-23,19 -209,367 -205,385 3,15 26,17 221,20 185,2 218,0 223,-13 6,-16 -194,-392 -213,-399 -6,-3 -18,1 -26,7z m53,182 l0,65 -35,0 -35,0 0,-65 0,-65 35,0 35,0 0,65z m-2,132 c3,32 2,33 -32,33 -33,0 -36,-3 -36,-28 0,-16 3,-32 7,-36 4,-4 19,-6 33,-4 20,2 26,9 28,35z"/>
+  <path fill="#D00000" d="M1140,100 l-53,50 -43,-21 c-107,-55 -226,-30 -332,70 l-62,58 -33,-29 c-49,-44 -92,-35 -92,21 0,18 18,43 60,85 l60,59 -85,86 c-86,86 -102,119 -73,148 25,25 53,10 140,-75 l89,-87 61,62 62,61 -87,89 c-48,49 -87,95 -87,101 0,28 22,51 48,51 21,0 47,-20 112,-85 l84,-84 67,64 c37,36 71,65 76,65 19,0 53,-32 53,-50 0,-11 -13,-34 -29,-52 l-29,-33 58,-62 c100,-106 125,-225 70,-332 l-21,-43 50,-53 c28,-30 51,-58 51,-62 0,-17 -32,-53 -46,-53 -8,0 -39,23 -69,51z"/>
+  <path fill="#D00000" d="M220,540 c-30,21 -28,47 7,86 l29,33 -58,62 c-100,106 -125,225 -70,332 l21,43 -50,53 c-28,30 -51,58 -51,62 0,17 32,53 46,53 8,0 39,-23 69,-51 l53,-50 43,21 c107,55 226,30 332,-70 l62,-58 33,29 c49,44 92,35 92,-21 0,-20 -54,-79 -258,-283 -142,-141 -262,-257 -268,-257 -5,0 -20,7 -32,16z"/>
+  <path fill="#F00000" d="M950,850 c-23,19 -209,367 -205,385 3,15 26,17 221,20 185,2 218,0 223,-13 6,-16 -194,-392 -213,-399 -6,-3 -18,1 -26,7z m53,182 l0,65 -35,0 -35,0 0,-65 0,-65 35,0 35,0 0,65z m-2,132 c3,32 2,33 -32,33 -33,0 -36,-3 -36,-28 0,-16 3,-32 7,-36 4,-4 19,-6 33,-4 20,2 26,9 28,35z"/>
   </svg>
   <svg id="ico-connecting" width="15px" height="15px" viewBox="0 0 1300 1300" xmlns="http://www.w3.org/2000/svg">
-	<g fill="var(--sol-dark-green)">
-	  <rect x="550" y="1" width="200" height="350" opacity=".1"/>
-	  <rect x="550" y="1" width="200" height="350" transform="rotate(45 650 650)" opacity=".25"/>
-	  <rect x="550" y="1" width="200" height="350" transform="rotate(90 650 650)" opacity=".5"/>
-	  <rect x="550" y="1" width="200" height="350" transform="rotate(135 650 650)" opacity=".75"/>
-	  <rect x="550" y="1" width="200" height="350" transform="rotate(180 650 650)" opacity="1.00"/>
-	  <animateTransform attributeName="transform" type="rotate" calcMode="discrete" dur="0.9s" values="0 650 650;45 650 650;90 650 650;135 650 650;180 650 650;225 650 650;270 650 650;315 650 650;360 650 650" repeatCount="indefinite"/>
-	</g>
+  <g fill="var(--sol-dark-green)">
+    <rect x="550" y="1" width="200" height="350" opacity=".1"/>
+    <rect x="550" y="1" width="200" height="350" transform="rotate(45 650 650)" opacity=".25"/>
+    <rect x="550" y="1" width="200" height="350" transform="rotate(90 650 650)" opacity=".5"/>
+    <rect x="550" y="1" width="200" height="350" transform="rotate(135 650 650)" opacity=".75"/>
+    <rect x="550" y="1" width="200" height="350" transform="rotate(180 650 650)" opacity="1.00"/>
+    <animateTransform attributeName="transform" type="rotate" calcMode="discrete" dur="0.9s" values="0 650 650;45 650 650;90 650 650;135 650 650;180 650 650;225 650 650;270 650 650;315 650 650;360 650 650" repeatCount="indefinite"/>
+  </g>
   </svg>
   <svg id="ico-plus" class="std-ico" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
-	<rect fill="var(--sol-dark-gray)" x="0" y="0" height="50%" width="50%" transform="skewX(45)" />
-	<rect fill="var(--sol-dark-gray)" x="100%" y="50%" height="50%" width="50%" transform="skewX(-45)" />
+  <rect fill="var(--sol-dark-gray)" x="0" y="0" height="50%" width="50%" transform="skewX(45)" />
+  <rect fill="var(--sol-dark-gray)" x="100%" y="50%" height="50%" width="50%" transform="skewX(-45)" />
   </svg>
   <svg id="ico-mins" class="std-ico" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
-	<rect fill="var(--sol-dark-gray)" x="0" y="0" height="50%" width="50%" transform="skewY(45)" />
-	<rect fill="var(--sol-dark-gray)" x="50%" y="100%" height="50%" width="50%" transform="skewY(-45)" />
+  <rect fill="var(--sol-dark-gray)" x="0" y="0" height="50%" width="50%" transform="skewY(45)" />
+  <rect fill="var(--sol-dark-gray)" x="50%" y="100%" height="50%" width="50%" transform="skewY(-45)" />
   </svg>
 </div></head>
 
 <body>
-
-  <aside class="flex-container-col shadow main-navi">
-	<div class="section section-padding">
-	  <img class="sidelogo" src="img/logo_white.png">
-	</div>
+  <!-- SIDE NAVI BAR -->
+  <aside id="main-navi" class="flex-container-col shadow main-navi">
+    <!-- SOLACE LOGO -->
+    <div class="section section-padding">
+      <img class="sidelogo" src="img/logo_white.png">
+    </div>
+    <!-- FIRST (CURRENT ONLY) SECTION IN NAVI -->
     <nav class="section-navi section-padding">
+      <!-- SECTION HEADER -->
       <header class="navi-header">
-	    <svg class="navi-ico" viewBox="0 0 25 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <svg class="navi-ico" viewBox="0 0 25 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
           <g id="MISC" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
             <g id="13-copy-5" transform="translate(-11.000000, -123.000000)" stroke="#FFFFFF" stroke-width="2">
             <path d="M31.9952016,130.247914 C33.7572774,130.86268 35,132.547772 35,134.5 C35,136.983556 32.9991033,139 30.5269855,139 L17.069416,139 C14.2734986,139 12,136.765582 12,134.000536 C12,131.989799 13.212281,130.222741 15.0006635,129.434801 C15.0403058,127.489198 16.8510217,126 19,126 C19.5433077,126 20.0722122,126.094878 20.5600026,126.274879 C21.7768926,124.851975 23.5660888,124 25.5,124 C29.0054369,124 31.8627618,126.774896 31.9952016,130.247914 Z" id="I_VPN" transform="translate(23.500000, 131.500000) scale(-1, 1) translate(-23.500000, -131.500000) "></path>
             </g>
           </g>
         </svg>
-		Messaging
+      Messaging
       </header>
-	  <ul class="navi-container">
-	    <li class="navi-item selected" hx-get="browser.html" hx-target="main">Queue Browser</li>
-	  </ul>
+      <!-- NAVI ITEMS -->
+      <ul class="navi-container">
+        <li class="navi-item selected">Queue Browser</li>
+      </ul>
     </nav>
-	<div id="suw-info" class="section section-padding log-style"></div>
-    <div class="section section-padding log-style" id="statusOutput"></div>
+    <!-- SOLACE WEB UTILITY INFO -->
+    <div id="suw-info" class=" section-padding log-style sticky-bottom"></div>
+    <!--div class=" section-padding log-style sticky-bottom" id="statusOutput"></div-->
   </aside>
-  <main class="bg-trans-gray noborder flex-container-col main-body gray-bg">
+  
+  <!-- MAIN BODY -->
+  <main id="main-body" class="bg-trans-gray noborder flex-container-col main-body gray-bg">
+  
+    <!-- CLIENT CONNECTION FORM -->
     <section class="section-main no-flex-item">
-	  <!--header class="title">Solace PubSub+ Broker Client Connection</header-->
-	  <div class="expand-container-toggle" expand-target="clientConnectionForm" expand-default="display">
-		<header class="section-title">
-		  Solace PubSub+ Broker Client Connection
-          <svg id="clientConnStatus" class="std-ico" version="1.0" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 1300 1300">
+      <details class="section-details" open>
+        <summary class="section-title">
+          Solace PubSub+ Broker Client Connection
+          <svg id="clientConnectStatus" class="std-ico" version="1.0" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 1300 1300">
             <path fill="#D00000" d="M1140,100 l-53,50 -43,-21 c-107,-55 -226,-30 -332,70 l-62,58 -33,-29 c-49,-44 -92,-35 -92,21 0,18 18,43 60,85 l60,59 -85,86 c-86,86 -102,119 -73,148 25,25 53,10 140,-75 l89,-87 61,62 62,61 -87,89 c-48,49 -87,95 -87,101 0,28 22,51 48,51 21,0 47,-20 112,-85 l84,-84 67,64 c37,36 71,65 76,65 19,0 53,-32 53,-50 0,-11 -13,-34 -29,-52 l-29,-33 58,-62 c100,-106 125,-225 70,-332 l-21,-43 50,-53 c28,-30 51,-58 51,-62 0,-17 -32,-53 -46,-53 -8,0 -39,23 -69,51z"/>
             <path fill="#D00000" d="M220,540 c-30,21 -28,47 7,86 l29,33 -58,62 c-100,106 -125,225 -70,332 l21,43 -50,53 c-28,30 -51,58 -51,62 0,17 32,53 46,53 8,0 39,-23 69,-51 l53,-50 43,21 c107,55 226,30 332,-70 l62,-58 33,29 c49,44 92,35 92,-21 0,-20 -54,-79 -258,-283 -142,-141 -262,-257 -268,-257 -5,0 -20,7 -32,16z"/>
             <path fill="#F00000" d="M950,850 c-23,19 -209,367 -205,385 3,15 26,17 221,20 185,2 218,0 223,-13 6,-16 -194,-392 -213,-399 -6,-3 -18,1 -26,7z m53,182 l0,65 -35,0 -35,0 0,-65 0,-65 35,0 35,0 0,65z m-2,132 c3,32 2,33 -32,33 -33,0 -36,-3 -36,-28 0,-16 3,-32 7,-36 4,-4 19,-6 33,-4 20,2 26,9 28,35z"/>
           </svg>
-		</header>
-      </div>
-      <div class="expand-container-body" id="clientConnectionForm">
-		<input class="loginfield" type="text" name="clientHost" id="clientHost" placeholder="Broker URL (e.g. wss://localhost:1443)" required><input class="loginfield" type="text" name="clientUser" id="clientUser" placeholder="Client Username" required><input class="loginfield" type="password" name="clientPass" id="clientPass" placeholder="Client Password" required><br><input class="loginfield" type="text" name="clientVpn" id="clientVpn" placeholder="Message VPN" required><input class="loginfield" type="text" name="clientQueue" id="clientQueue" placeholder="Queue Name" required> <input type=button value="Select Queue">
-      </div>
-	  <input name="clientConnect" id="clientConnect" type="button" value="Connect">
-	</section>
-	<section class="section-main flex-item" style="min-height:300px">
-	  <header class="section-title">Queued Messages</header>
-	  <div class="spacer"></div>
-	  <!-- Message ID, Spooled Time, Size -->
-	  <table class="message-list-table">
-		<thead>
-		  <tr>
+        </summary>
+        <form class="login-form flex-container-row">
+          <input class="login-field flex-item" type="text" name="clientHost" id="clientHost" placeholder="Broker URL (e.g. wss://localhost:1443)" required>
+          <input class="login-field flex-item" type="text" name="clientUser" id="clientUser" placeholder="Client Username" required>
+          <input class="login-field flex-item" type="password" name="clientPass" id="clientPass" placeholder="Client Password" required>
+        </form>
+        <form class="login-form flex-container-row">
+          <input class="login-field flex-item" type="text" name="clientVpn" id="clientVpn" placeholder="Message VPN" required>
+          <input class="login-field flex-item" type="text" name="clientQueue" id="clientQueue" placeholder="Queue Name" required>
+        </form>
+        <button class="login-button" name="clientConnectSave" id="clientConnectSave">Save</button>
+        <button class="login-button" name="clientConnectLoad" id="clientConnectLoad">Load</button>
+        <button class="login-button"  name="clientConnectClear" id="clientConnectClear">Clear</button>
+      </details>
+      <button class="login-button connect"  name="clientConnect" id="clientConnect" type="button">Connect</button>
+    </section>
+    <!-- QUEUED MESSAGE LIST MAIN SECTION -->
+    <section class="section-main flex-item">
+      <header class="section-title">Queued Messages | Downloaded <span id="msgCount">0</span> | Displaying <span id="msgDisplayCount">0</span> | Status: <span id="msgStatus">Disconnected</span></header>
+      <div class="spacer"></div>
+      <!-- Message ID, Spooled Time, Size -->
+      <table class="message-list-table">
+        <thead>
+          <tr>
             <th><input disabled type="checkbox" id="cb-msg"></th>
-		    <th>Message ID</th>
-			<th>Repl Grp Msg ID</th>
-			<th>Message Type</th>
-		    <th>Size</th>
+            <th>Message ID</th>
+            <th>Repl Grp Msg ID</th>
+            <th>Message Type</th>
+            <th>Size</th>
           </tr>
-		</thead>
-		<tbody id="queuedMessageList" style="overflow:auto; height:300px">
-		  <tr>
-		    <td colspan=3><br><br>&nbsp; &nbsp; &nbsp;Please connect to broker to list messages</td>
-		  </tr>
-		</tbody>
-	  </table>
-	</section>
-	<section class="section-main no-flex-item">
-	  <header class="section-title">View Message</header>
-	  <div class="spacer"></div>
-	  <header class="flex-container-row">
-		<div class="tab-header no-flex-item" id="msgout-tabText" tab-target-group="messageOutput" tab-target="msgout-msgText">Text</div>
-		<div class="tab-header no-flex-item" id="msgout-tabBinary" tab-target-group="messageOutput" tab-target="msgout-msgBinary">Binary Text</div>
-		<div class="tab-header no-flex-item" id="msgout-tabRaw" tab-target-group="messageOutput" tab-target="msgout-msgRaw">Raw</div>
-	  </header>
-	  <div id="messageOutput">
-        <div class="log-style norm-font std-height border tab-target" id="msgout-msgText" tab-group="messageOutput"></div>
-	    <div class="log-style norm-font std-height border tab-target" id="msgout-msgBinary" tab-group="messageOutput"></div>
-	    <div class="log-style norm-font std-height border tab-target" id="msgout-msgRaw" tab-group="messageOutput"></div>
-	  </div>
-	</section>
+        </thead>
+        <tbody id="queuedMessageList" style="overflow:auto; max-height:300px">
+          <tr>
+            <td colspan="100"><br>&nbsp; &nbsp; &nbsp;Please connect to broker to list messages</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    
+    <!-- VIEW MESSAGE CONTENT MAIN SECTION -->
+    <section class="section-main no-flex-item">
+      <header class="section-title">View Message</header>
+      <div class="spacer"></div>
+      <header class="flex-container-row">
+        <div class="tab-header no-flex-item" id="msgout-tabText" tab-target="msgout-msgText">Text</div>
+        <div class="tab-header no-flex-item" id="msgout-tabBinary" tab-target="msgout-msgBinary">Binary Text</div>
+        <div class="tab-header no-flex-item" id="msgout-tabRaw" tab-target="msgout-msgRaw">Raw</div>
+      </header>
+      <div id="messageOutput">
+        <div class="log-style norm-font std-height border tab-body flex-item" id="msgout-msgText" tab-group="messageOutput"></div>
+        <div class="log-style norm-font std-height border tab-body flex-item" id="msgout-msgBinary" tab-group="messageOutput"></div>
+        <div class="log-style norm-font std-height border tab-body flex-item" id="msgout-msgRaw" tab-group="messageOutput"></div>
+      </div>
+    </section>
+    
   </main>
-  
 </body>
 <script id="solace-web-utility">
-// tab related functions
-function showTab(z) {
-	resetTabHeaders(z.parentElement);
-	hideAllTabs(document.getElementById(z.getAttribute("tab-target-group")));
-	z.classList.add("tab-selected");
-	document.getElementById(z.getAttribute("tab-target")).classList.remove("hidden");
-}
-function resetTabHeaders(z) {
-	for (let tb of z.children) {
-		tb.classList.remove("tab-selected");
-	}
-}
-function hideAllTabs(z) {
-	for (let tab of z.getElementsByClassName("tab-target")) {
-		tab.classList.add("hidden");
-	}
-}
 
 // message list table related functions
 function highlightRow(z) {
-	for (let row of z.parentElement.children) {
-		row.classList.remove("message-row-selected");
-	}
-	z.classList.add("message-row-selected");
+  for (let row of z.parentElement.children) {
+    row.classList.remove("message-row-selected");
+  }
+  z.classList.add("message-row-selected");
 }
 
-// size format function
-function formatBytes(bytes, decimals = 2) {
-    if (!+bytes) return '0 Bytes'
-
-    const k = 1024
-    const dm = decimals < 0 ? 0 : decimals
-    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
-}
-var qbSession = null;
-var queuedMessages = {};
-var sessionEvent = null;
-var clientSessionConnected = false;
-var debugMode = 0;
 
 window.onload = function() {
-	// added web app info
-	document.getElementById("suw-info").innerHTML = `Solace Web Utility v${versions.swu}` + ((versions.isHosted) ? "" : "<br>(Local Mode)");
-	
-	// determine debug mode
-	var debugParm = (new URLSearchParams(window.location.search)).get("debug");
-	if (typeof debugParm === 'string' || debugParm instanceof String) debugParm = debugParm.toUpperCase();
-	switch (debugParm) {
-		case 1:
-		case "1":
-		case "CONSOLE":
-			debugMode = 1;
-			break;
-		case 2:
-		case "2":
-		case "DISPLAY":
-			debugMode = 2;
-			break;
-	}
-	
-	// add log container if debugMode = 2
-	if (debugMode == 2) {
-		var mainBody = document.getElementsByClassName("main-body")[0];
-		logSec = document.createElement("section");
-		logSec.classList.add("section-main");
-		logSec.classList.add("no-flex-item");
-		logSec.innerHTML = `<div id="swuLog" class="log-style swu-log-height border"></div>`
-		mainBody.appendChild(logSec);
-	}
-	
-	// add svg to all toggle containers
-	for (let dom of document.getElementsByClassName("expand-container-toggle")) {
-		var tgt = document.getElementById(dom.getAttribute("expand-target"));
-		var def = dom.getAttribute("expand-default");
-		var svg = null;
-		if (def == "hidden") {
-			svg = document.getElementById("ico-plus").cloneNode(true);
-			tgt.classList.add("hidden");
-			dom.classList.add("inline");
-		} else if (def == "display") {
-			svg = document.getElementById("ico-mins").cloneNode(true);
-			tgt.classList.remove("hidden");
-		}
-		svg.style.marginRight = "10px";
-		dom.insertBefore(svg, dom.firstChild);
-		dom.onclick = function() {
-			if (tgt.classList.contains("hidden")) {
-				this.getElementsByTagName("svg")[0].innerHTML = document.getElementById("ico-mins").innerHTML;
-				this.classList.remove("inline");
-				tgt.classList.remove("hidden");
-			} else {
-				this.getElementsByTagName("svg")[0].innerHTML = document.getElementById("ico-plus").innerHTML;
-				this.classList.add("inline");
-				tgt.classList.add("hidden");
-			}
-		};
-	}
-	
-	/* 	  
-	*/
-	
-	// add default values
-	document.getElementById("clientHost").value = "wss://localhost:61443";
-	document.getElementById("clientUser").value = "default";
-	document.getElementById("clientVpn").value = "default";
-	document.getElementById("clientQueue").value = "test";
-	
-	// add toggle connect function to button
-	document.getElementById("clientConnect").onclick = function() {
-		if (clientSessionConnected) {
-			try {
-				qbSession.disconnect();
-			} catch (err) {
-				swuLog("[Session Event] " +err.toString());
-			} finally {
-				doDisconnectCleanup();
-			}
-		} else {
-			document.getElementById('clientConnStatus').innerHTML=document.getElementById('ico-connecting').innerHTML;
-			this.value = "Connecting...";
-			doConnect();
-		}
-	}
-	
-	// loggin function for debug mode
-	function swuLog(z) {
-		var dt = null;
-		if (debugMode != 0)
-			dt = new Date();
-		if (debugMode == 1) {
-			console.log(document.getElementById("swuLog").innerHTML + "[" + dt.toISOString() + "] " +z);
-		} else if (debugMode == 2) {
-			document.getElementById("swuLog").innerHTML = document.getElementById("swuLog").innerHTML + "[" + dt.toISOString() + "] " +z+ "\n";
-			document.getElementById("swuLog").scrollTop = document.getElementById("swuLog").scrollHeight;
-		}
-	};
-	
-	
-	var allSessionEvents = [
-		[ solace.SessionEventCode.ACKNOWLEDGED_MESSAGE, function(evt) { swuLog("[Session Event] " +evt.infoStr); }],
-		[ solace.SessionEventCode.CAN_ACCEPT_DATA, function() { swuLog("[Session Event] Can accept data again."); }],
-		[ solace.SessionEventCode.CONNECT_FAILED_ERROR, function(evt) { swuLog("[Session Event] " +evt.infoStr); }],
-		[ solace.SessionEventCode.DISCONNECTED, function() { swuLog("[Session Event] Disconnected"); doDisconnectCleanup(); }],
-		[ solace.SessionEventCode.DOWN_ERROR, function(evt) { swuLog("[Session Event] " +evt.infoStr); qbSession.disconnect(); }],
-		[ solace.SessionEventCode.GUARANTEED_MESSAGE_PUBLISHER_DOWN, function(evt) { swuLog("[Session Event] " +evt.infoStr); qbSession.disconnect(); }],
-		[ solace.SessionEventCode.MESSAGE, function(msg) { swuLog("[Session Event] Received message[id=" +msg.getGuaranteedMessageId()+ "]"); }],
-		[ solace.SessionEventCode.PROPERTY_UPDATE_ERROR, function(evt) { swuLog("[Session Event] " +evt.infoStr); }],
-		[ solace.SessionEventCode.PROPERTY_UPDATE_OK, function(evt) { swuLog("[Session Event] " +evt.infoStr); }],
-		[ solace.SessionEventCode.PROVISION_ERROR, function(evt) { swuLog("[Session Event] " +evt.infoStr); }],
-		[ solace.SessionEventCode.PROVISION_OK, function(evt) { swuLog("[Session Event] " +evt.infoStr); }],
-		[ solace.SessionEventCode.RECONNECTED_NOTICE, function(evt) { swuLog("[Session Event] " +evt.infoStr); }],
-		[ solace.SessionEventCode.RECONNECTING_NOTICE, function(evt) { swuLog("[Session Event] " +evt.infoStr); }],
-		[ solace.SessionEventCode.REJECTED_MESSAGE_ERROR, function(evt) { swuLog("[Session Event] " +evt.infoStr); }],
-		[ solace.SessionEventCode.REPUBLISHING_UNACKED_MESSAGES, function(evt) { swuLog("[Session Event] " +evt.infoStr); }],
-		[ solace.SessionEventCode.SUBSCRIPTION_ERROR, function(evt) { swuLog("[Session Event] " +evt.infoStr); }],
-		[ solace.SessionEventCode.SUBSCRIPTION_OK, function(evt) { swuLog("[Session Event] " +evt.infoStr); }],
-		[ solace.SessionEventCode.UNSUBSCRIBE_TE_TOPIC_ERROR, function(evt) { swuLog("[Session Event] " +evt.infoStr); }],
-		[ solace.SessionEventCode.UNSUBSCRIBE_TE_TOPIC_OK, function() { swuLog("[Session Event] Unsubscribed from Topic"); }],
-		[ solace.SessionEventCode.UP_NOTICE, function() { swuLog("[Session Event] Connected"); }]
-	];
-	var allQueueBrowserEvents = [
-		[ solace.QueueBrowserEventName.CONNECT_FAILED_ERROR, function (evt) { swuLog("[Queue Event] " + evt.message); qbSession.disconnect(); }],
-		[ solace.QueueBrowserEventName.DISPOSED, function () { swuLog("[Queue Event] Queue Browser Session disposed"); qbSession.disconnect(); }],
-		[ solace.QueueBrowserEventName.DOWN, function () { swuLog("[Queue Event] Queue Browser Session down"); qbSession.disconnect(); }],
-		[ solace.QueueBrowserEventName.DOWN_ERROR, function (evt) { swuLog("[Queue Event] " + evt.message); qbSession.disconnect(); }],
-		[ solace.QueueBrowserEventName.GM_DISABLED, function () { swuLog("[Queue Event] Guaranteed Messaging is disabled"); qbSession.disconnect(); }],
-//		solace.QueueBrowserEventName.MESSAGE,
-		[ solace.QueueBrowserEventName.UP, function () { swuLog("[Queue Event] Connected to Queue"); }]
-	];
-	var solMessageTypes = [
-		"BINARY",
-		"MAP",
-		"STREAM",
-		"TEXT"
-	];
-	
-	// add message to arraylist object and dom table list
-	function addMessage(msg) {
-		
-		queuedMessages[msg.getGuaranteedMessageId().toString()] = msg;
-		var msgType = msg.getType();
-		var size = msg.getBinaryAttachment().length + ((msg.getSdtContainer() == null) ? 0 : 10000);
-		var htmlTR = document.createElement("tr");
-		htmlTR.classList.add("message-row");
-		htmlTR.id = "msgrow-" +msg.getGuaranteedMessageId().toString();
-		htmlTR.onclick = function() {
-			highlightRow(this);
-			document.getElementById("msgout-msgText").innerHTML = (msgType == 3) ? msg.getSdtContainer().getValue() : "";
-			document.getElementById("msgout-msgBinary").innerHTML = msg.getBinaryAttachment().toString();
-			document.getElementById("msgout-msgRaw").innerHTML = msg.dump();
-			(msgType == 3) ? showTab(document.getElementById("msgout-tabText")) : showTab(document.getElementById("msgout-tabBinary"))
-		};
-		htmlTR.innerHTML = "<td class=\"message-cell\"><input disabled type=\"checkbox\" id=\"cb-msg-" +msg.getGuaranteedMessageId().toString()+ "\"></td>"+
-			"<td class=\"message-cell\">" +msg.getGuaranteedMessageId().toString()+ "</td>" +
-			"<td class=\"message-cell\">" +msg.getReplicationGroupMessageId().toString()+ "</td>" +
-			"<td class=\"message-cell\">" +solMessageTypes[msg.getType()]+ "</td>"+
-			"<td class=\"message-cell\">" +formatBytes(size)+ "</td>"+
-			"</tr>"
-		document.getElementById("queuedMessageList").appendChild(htmlTR);
-	};
-	// initalize message tabs
-	showTab(document.getElementById("msgout-tabText"));
-	// add functions to tabs
-	document.getElementById("msgout-tabText").onclick = function() { showTab(this); };
-	document.getElementById("msgout-tabBinary").onclick = function() { showTab(this); };
-	document.getElementById("msgout-tabRaw").onclick = function() { showTab(this); };
-	
-	// initialize solace api
-	var factoryProps = new solace.SolclientFactoryProperties();
-	factoryProps.profile = solace.SolclientFactoryProfiles.version10;
-	solace.SolclientFactory.init(factoryProps);
-	solace.SolclientFactory.setLogLevel(solace.LogLevel.DEBUG);
-	
-	// connect
-	function doConnect() {
-		try {
-			qbSession = solace.SolclientFactory.createSession({
-				url:      document.getElementById("clientHost").value,
-				vpnName:  document.getElementById("clientVpn").value,
-				userName: document.getElementById("clientUser").value,
-				password: document.getElementById("clientPass").value,
-				connectRetries: 0,
-				connectRetriesPerHost: 0,
-				includeSenderId: true,
-				reconnectRetries: 0,
-				reconnectRetryWaitInMsecs: 0,
-			});
-			for (let [evt, func] of allSessionEvents) {
-				qbSession.on(evt, func);
-			}
-			swuLog("[SessionEvent] " +"Connecting...");
-			qbSession.connect();
-		} catch (err) {
-			swuLog("Queue Browser Session Exception:");
-			swuLog(err.toString());
-			doDisconnectCleanup();
-		}
-		try {
-			qBrowser = qbSession.createQueueBrowser({
-				connectAttempts: 1,
-				connectTimeoutInMsecs: 1000,
-				queueDescriptor: {
-					name: document.getElementById("clientQueue").value,
-					type: solace.QueueType.QUEUE,
-				},
-				windowSize: 1,
-	});
-			qBrowser.on(solace.QueueBrowserEventName.MESSAGE, function(msg) {
-				addMessage(msg);
-			});
-			for (let [evt, func] of allQueueBrowserEvents) {
-				qBrowser.on(evt, func);
-			}
-			qBrowser.connect();
-			document.getElementById("queuedMessageList").innerHTML = "";
-			document.getElementById("clientConnect").value = "Disconnect";
-			document.getElementById('clientConnStatus').innerHTML=document.getElementById('ico-connected').innerHTML
-			clientSessionConnected = true;
-		} catch (err) {
-			swuLog("Queue Browser Exception");
-			swuLog(err.toString());
-			sessionEvent = err;
-		}
-	}
-	
-	// ensure session is closed
-	function doDisconnectCleanup() {
-		qbSession.dispose();
-		clientSessionConnected = false;
-		qbSession = null;
-		queuedMessage = [];
-		document.getElementById("clientConnect").value = "Connect";
-		document.getElementById("clientConnStatus").innerHTML=document.getElementById('ico-disconnected').innerHTML;
-		document.getElementById("queuedMessageList").innerHTML = "";
-		unShowText();
-	}
+    
+  // add message to arraylist object and dom table list
+  function addMessage(msg) {
+    
+    queuedMessages[msg.getGuaranteedMessageId().toString()] = msg;
+    let msgType = msg.getType();
+    let size = msg.getBinaryAttachment().length + ((msg.getType() != 0) ? 0 : 10000);
+    let htmlTR = document.createElement("tr");
+    htmlTR.classList.add("message-row");
+    htmlTR.id = "msgrow-" +msg.getGuaranteedMessageId().toString();
+    htmlTR.onclick = function() {
+      highlightRow(this);
+      document.getElementById("msgout-msgText").innerHTML = (msgType == 3) ? msg.getSdtContainer().getValue() : "";
+      document.getElementById("msgout-msgBinary").innerHTML = msg.getBinaryAttachment().toString();
+      document.getElementById("msgout-msgRaw").innerHTML = msg.dump();
+      (msgType == 3) ? showTab(document.getElementById("msgout-tabText")) : showTab(document.getElementById("msgout-tabBinary"))
+    };
+    htmlTR.innerHTML = "<td class=\"message-cell\"><input disabled type=\"checkbox\" id=\"cb-msg-" +msg.getGuaranteedMessageId().toString()+ "\"></td>"+
+      "<td class=\"message-cell\">" +msg.getGuaranteedMessageId().toString()+ "</td>" +
+      "<td class=\"message-cell\">" +msg.getReplicationGroupMessageId().toString()+ "</td>" +
+      "<td class=\"message-cell\">" +solace.MessageTypes.nameOf(msg.getType())+ "</td>"+
+      "<td class=\"message-cell\">" +formatBytes(size)+ "</td>"+
+      "</tr>"
+    document.getElementById("queuedMessageList").appendChild(htmlTR);
+  };
+  // initalize message tabs
+  
+  
+  // connect
+  function doConnect() {
+    try {
+      qbSession = solace.SolclientFactory.createSession({
+        url:      document.getElementById("clientHost").value,
+        vpnName:  document.getElementById("clientVpn").value,
+        userName: document.getElementById("clientUser").value,
+        password: document.getElementById("clientPass").value,
+        connectRetries: 0,
+        connectRetriesPerHost: 0,
+        includeSenderId: true,
+        reconnectRetries: 0,
+        reconnectRetryWaitInMsecs: 0,
+      });
+      for (let [evt, func] of allSessionEvents) {
+        qbSession.on(evt, func);
+      }
+      SolaceWebUtility.log("[SessionEvent] " +"Connecting...");
+      qbSession.connect();
+    } catch (err) {
+      SolaceWebUtility.log("Queue Browser Session Exception:");
+      SolaceWebUtility.log(err.toString());
+      doDisconnectCleanup();
+    }
+    try {
+      qBrowser = qbSession.createQueueBrowser({
+        connectAttempts: 1,
+        connectTimeoutInMsecs: 1000,
+        queueDescriptor: {
+          name: document.getElementById("clientQueue").value,
+          type: solace.QueueType.QUEUE,
+        },
+        windowSize: 1,
+  });
+      qBrowser.on(solace.QueueBrowserEventName.MESSAGE, function(msg) {
+        addMessage(msg);
+      });
+      for (let [evt, func] of allQueueBrowserEvents) {
+        qBrowser.on(evt, func);
+      }
+      qBrowser.connect();
+      document.getElementById("queuedMessageList").innerHTML = "";
+      document.getElementById("clientConnect").value = "Disconnect";
+      document.getElementById('clientConnStatus').innerHTML=document.getElementById('ico-connected').innerHTML
+      clientSessionConnected = true;
+    } catch (err) {
+      SolaceWebUtility.log("Queue Browser Exception");
+      SolaceWebUtility.log(err.toString());
+      sessionEvent = err;
+    }
+  }
+  
+  // ensure session is closed
+  function doDisconnectCleanup() {
+    try {
+      qbSession.dispose();
+    } catch (err) {
+      SolaceWebUtility.log("Already disposed");
+    }
+    clientSessionConnected = false;
+    qbSession = null;
+    queuedMessages = [];
+    document.getElementById("clientConnect").value = "Connect";
+    document.getElementById("clientConnStatus").innerHTML=document.getElementById('ico-disconnected').innerHTML;
+    document.getElementById("queuedMessageList").innerHTML = "";
+    document.getElementById("msgout-msgText").innerHTML = "";
+    document.getElementById("msgout-msgBinary").innerHTML = "";
+    document.getElementById("msgout-msgRaw").innerHTML = "";
+  }
 }
 </script>
 </html>
