@@ -832,7 +832,7 @@ const SolaceWebUtility = {
           },        
         });
         tmpQueueBrowser.on(solace.QueueBrowserEventName.CONNECT_FAILED_ERROR, function(opErr) {
-          SolaceWebUtility.ui.showPopup(`Unable to bind queue again to delete Message Id ${solMsg.SWU.gMsgId}.`);
+          SolaceWebUtility.ui.showPopup(`Unable to bind queue again to delete Message Id ${solMsg.SWU.gMsgId}.`, 3000, "error");
           //tmpQueueBrowser = null;
           SolaceWebUtility.log("QBrowser Event", opErr);
           throw new Error(`Unable to delete Message Id ${solMsg.SWU.gMsgId}.`);
@@ -844,6 +844,9 @@ const SolaceWebUtility = {
               SolaceWebUtility.ui.removeMessage(solMsg.SWU.gMsgId);
             tmpQueueBrowser.disconnect();
             clearTimeout(tmpQueueBrowserTimer);
+            SolaceWebUtility.clientSession.queuedMessageSize -= solMsg.SWU.estMsgSize;
+            delete SolaceWebUtility.clientSession.queuedMessages[solMsg.SWU.gMsgId];
+            SolaceWebUtility.ui.updateDownloadedCount();
           } else {
             clearTimeout(tmpQueueBrowserTimer);
             tmpQueueBrowserTimer = setTimeout(function() {
@@ -861,10 +864,10 @@ const SolaceWebUtility = {
         SolaceWebUtility.clientSession.queueBrowser.removeMessageFromQueue(solMsg);
         if (typeof solMsg.SWU.domId !== "undefined")
           SolaceWebUtility.ui.removeMessage(solMsg.SWU.gMsgId);
+        SolaceWebUtility.clientSession.queuedMessageSize -= solMsg.SWU.estMsgSize;
+        delete SolaceWebUtility.clientSession.queuedMessages[solMsg.SWU.gMsgId];
+        SolaceWebUtility.ui.updateDownloadedCount();
       }
-      SolaceWebUtility.clientSession.queuedMessageSize -= solMsg.SWU.estMsgSize;
-      delete SolaceWebUtility.clientSession.queuedMessages[solMsg.SWU.gMsgId];
-      SolaceWebUtility.ui.updateDownloadedCount();
     },
     
     /*
