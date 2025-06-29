@@ -39,6 +39,9 @@ Users are expected to know the connection parameters / details.
 6. Supports saving/loading login credentials from local browser storage (excluding password)
 7. Limits browsing to 500MB or 1000 messages (whichever hits first) - pagination features will be available in the future.
 
+> [!NOTE]
+> When connecting to secured (SSL/TLS) endpoints, please ensure the broker server certificate is valid (i.e. CN, SAN, Dates etc. all are correct). Due to limitations of how a browser work, you might not be able to connect to invalid/unvalidated secured endpoints.
+
 ## References
 - https://docs.solace.com/API/Messaging-APIs/JavaScript-API/js-home.htm
 - https://tutorials.solace.dev/javascript/
