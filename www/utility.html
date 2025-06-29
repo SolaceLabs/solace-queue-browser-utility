@@ -487,7 +487,10 @@ const SolaceWebUtility = {
     maxTotalMsges: 1000,
     maxDispMsgSize: 1048576,
   },
-  deleteMessageBugExists: true,
+  deleteMessageBug: {
+    exists: true,
+    qbDisconnectTime: 10000,
+  },
   determineDebugMode: function() {
     let debugParm = (new URLSearchParams(window.location.search)).get("debug");
     if (typeof debugParm === 'string' || debugParm instanceof String) debugParm = debugParm.toUpperCase();
@@ -819,7 +822,7 @@ const SolaceWebUtility = {
       As a result, a new queue browser object is created to execute removeMessageFromQueue() in sequence every time a user wants to remove the message (single and bulk).
     */
       SolaceWebUtility.log("Remove Msg", `Removing ${solMsg.SWU.gMsgId}`);
-      if (SolaceWebUtility.deleteMessageBugExists) { // logic to work around removeMessageFromQueue bug where Solace API is unable to removeMessageFromQueue for the message that is immediately before the message that was removeMessageFromQueue before.
+      if (SolaceWebUtility.deleteMessageBug.exists) { // logic to work around removeMessageFromQueue bug where Solace API is unable to removeMessageFromQueue for the message that is immediately before the message that was removeMessageFromQueue before.
         let tmpQueueBrowser = null, tmpQueueBrowserTimer = null;
         tmpQueueBrowser = SolaceWebUtility.clientSession.session.createQueueBrowser({
           ...SolaceWebUtility.clientSession.queueBindingParameters,
@@ -846,7 +849,7 @@ const SolaceWebUtility = {
             tmpQueueBrowserTimer = setTimeout(function() {
               SolaceWebUtility.ui.showPopup(`Message Id ${solMsg.SWU.gMsgId} might no longer be in the queue.`);
               tmpQueueBrowser.disconnect();
-            }, 3000);
+            }, SolaceWebUtility.deleteMessageBug.qbDisconnectTime);
           }
         });
         try {
@@ -860,7 +863,7 @@ const SolaceWebUtility = {
           SolaceWebUtility.ui.removeMessage(solMsg.SWU.gMsgId);
       }
       SolaceWebUtility.clientSession.queuedMessageSize -= solMsg.SWU.estMsgSize;
-      //delete SolaceWebUtility.clientSession.queuedMessages[solMsg.SWU.gMsgId];
+      delete SolaceWebUtility.clientSession.queuedMessages[solMsg.SWU.gMsgId];
       SolaceWebUtility.ui.updateDownloadedCount();
     },
     
