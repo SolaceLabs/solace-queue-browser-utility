@@ -1,13 +1,17 @@
-name: web-server
+name: solace-utility
 services:
   httpd:
-    hostname: httpd
-    container_name: busybox-httpd
+    hostname: sol-web-utility
+    container_name: sol-web-utility
     build:
       context: .
       dockerfile: Dockerfile
+#    environment:
+#      HTTPD_CONF: "/etc/lighttpd/httpd.conf"
     ports:
-      # http
-      - '48080:8080'
+      # https
+      - '48443:8443'
     volumes:
       - ./www:/www
+      - ./cert.pem:/certs/server.pem
+#      - .httpd.conf:/etc/lighttpd/httpd.conf
