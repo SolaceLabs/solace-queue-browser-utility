@@ -4,26 +4,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlcgASZXIAJKVyADJlcgA8JXIAPuVyADflcgAoJXIACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACVyAAhlcgAkJXIAPOVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgAnQAAAAAAAAAAAAAAAAAAAACVyAAhlcgAppXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyADLAAAAAAAAAAAAAAAAlcgAkJXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAJ0AAAAAlcgASZXIAPOVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgAIJXIAJKVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAKCVyADJlcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyADflcgA8JXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA+5XIAPuVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAPCVyADflcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyADJlcgAoJXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgAkpXIACCVyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA85XIAEkAAAAAlcgAnZXIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAJAAAAAAAAAAAAAAAACVyADLlcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAKaVyAAhAAAAAAAAAAAAAAAAAAAAAJXIAJ2VyAD/lcgA/5XIAP+VyAD/lcgA/5XIAP+VyAD/lcgA85XIAJCVyAAhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlcgAIJXIAKCVyADflcgA+5XIAPCVyADJlcgAkpXIAEkAAAAAAAAAAAAAAAAAAAAA+B8AAOAHAADAAwAAgAEAAIABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQAAgAEAAMADAADgBwAA+B8AAA==">
 <style>
-ul {
-    margin: 0px 0px 0px 0px;
-    padding: 0px;
-}  
-li.tick { 
-    list-style-type: '\2714';
-    margin: 0px 0px 0px 0px;
-    padding: 0px 0px 0px 3px;
-}
-li.tick::marker {
-    color: #008000;
-}
-li.cross {
-    list-style-type: '\2718';
-    margin: 0px 0px 0px 0px;
-    padding: 0px 0px 0px 3px;
-}
-li.cross::marker {
-    color: #A00000;
-}
 :root { /* standard colors */
     --sol-green: #00c895;
     --sol-mid-green: #00AB91;
@@ -101,15 +81,9 @@ input, button, select {
     border-style: solid;
     border-width: 1px;
 }
-/* bulk delete feature is currently disabled 
-input[type=checkbox] {
-    visibility: hidden;
-	pointer-events: none;
-}
-*/
 /*
 #################################################
-################# popup related #################
+########## notification popup related. ##########
 #################################################
 */
 .bgerror {
@@ -195,6 +169,9 @@ input[type=checkbox] {
 }
 .bg-off-white {
 	background-color: var(--off-white);
+}
+.bg-gray {
+    background-color: var(--sol-lite-gray);
 }
 .bg-trans-gray {
 	background-color: var(--transparent-gray);
@@ -327,6 +304,7 @@ input[type=checkbox] {
 	border-style: none;
 	color: var(--lightest-gray);
 	margin: 15px 0px;
+    padding: 0px;
 }
 .main-navi .section-navi .navi-container .navi-item {
 	border-color: #000;
@@ -354,6 +332,7 @@ input[type=checkbox] {
 .main-body {
 	width: calc(100vw - 200px);
 	min-height: 600px;
+    min-width: 700px;
 }
 .main-body .section-main {
 	background-color: var(--off-white);
@@ -405,7 +384,7 @@ login form
 .main-body .section-main .section-details .login-form .auth-type {
     /* */
 }
-.main-body .section-main .section-details .login-form * {
+.main-body .section-main .section-details .login-form > * {
 	margin: 5px;
 }
 .main-body .section-main .section-details .login-form .login-field {
@@ -472,6 +451,46 @@ message list
 .message-row-checkbox {
     /* empty css class to identify checkbox in message row */
 }
+/* -------------------------------------------------
+form popup with blur
+------------------------------------------------- */
+.form-popup-container {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+    
+	margin: 0px;
+    padding: 0px;
+    
+    height: 100vh;
+    width: 100vw;
+    
+    background-color: rgb(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+/*
+#################################################
+######### input wrapper for text + icon #########
+#################################################
+*/
+
+.input-text-wrapper {
+    background-color: #fff;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    padding: 0px;
+}
+.input-text-wrapper * {
+    border-style: none;
+    margin: 0px;
+    padding: 7px;
+    height: 100%;
+}
+.input-text-wrapper svg {
+    padding: 0px;
+}
+
 </style>
 <script>
 
@@ -773,9 +792,10 @@ const SolaceWebUtility = {
     // clientSession: pause queue browsing
     attemptPauseQueue: function() {
       try {
-        SolaceWebUtility.log("QBrowser Event", "Pausing queue...");
+        SolaceWebUtility.log("QBrowser Event", "Pausing queue due to configured resource limits");
         SolaceWebUtility.clientSession.queueBrowser.stop();
         SolaceWebUtility.clientSession.queueBrowserPaused = true;
+        document.getElementById("clientConnectStatus").innerHTML = SolaceWebUtility.ui.svg.pausSVG;
       } catch (err) {
         SolaceWebUtility.log("QBrowser Event", "Session seems to be already disconnected");
       }
@@ -900,9 +920,10 @@ const SolaceWebUtility = {
 SolaceWebUtility.ui = {
 
   svg: {
-    connSVG: `<path fill="var(--sol-mid-green)" d="M1090,140 l-126,124 -40,-20 c-24,-13 -67,-23 -106,-26 -57,-4 -75,-1 -123,21 -31,15 -83,51 -115,81 l-58,56 -28,-30 c-43,-44 -95,-36 -95,15 0,28 507,535 536,535 50,0 58,-52 14,-95 l-30,-28 56,-58 c30,-32 66,-84 81,-115 22,-48 25,-66 21,-123 -3,-39 -14,-83 -26,-107 l-21,-41 115,-114 c64,-63 120,-122 125,-132 13,-22 -13,-67 -38,-67 -9,0 -73,56 -142,124z"/>  <path fill="var(--sol-mid-green)" d="M330,420 c-20,20 -13,53 18,83 l30,28 -56,58 c-30,32 -66,84 -81,115 -22,48 -25,66 -21,123 3,39 14,83 26,107 l21,41 -115,114 c-64,63 -120,122 -125,132 -13,22 13,67 38,67 9,0 73,-56 142,-124 l126,-124 40,20 c24,13 67,23 106,26 57,4 75,1 123,-21 31,-15 83,-51 115,-81 l58,-56 28,30 c43,44 95,36 95,-15 0,-28 -507,-535 -536,-535 -11,0 -25,5 -32,12z"/>`,
-    dscnSVG: `<path fill="#D00000" d="M1140,100 l-53,50 -43,-21 c-107,-55 -226,-30 -332,70 l-62,58 -33,-29 c-49,-44 -92,-35 -92,21 0,18 18,43 60,85 l60,59 -85,86 c-86,86 -102,119 -73,148 25,25 53,10 140,-75 l89,-87 61,62 62,61 -87,89 c-48,49 -87,95 -87,101 0,28 22,51 48,51 21,0 47,-20 112,-85 l84,-84 67,64 c37,36 71,65 76,65 19,0 53,-32 53,-50 0,-11 -13,-34 -29,-52 l-29,-33 58,-62 c100,-106 125,-225 70,-332 l-21,-43 50,-53 c28,-30 51,-58 51,-62 0,-17 -32,-53 -46,-53 -8,0 -39,23 -69,51z"/>  <path fill="#D00000" d="M220,540 c-30,21 -28,47 7,86 l29,33 -58,62 c-100,106 -125,225 -70,332 l21,43 -50,53 c-28,30 -51,58 -51,62 0,17 32,53 46,53 8,0 39,-23 69,-51 l53,-50 43,21 c107,55 226,30 332,-70 l62,-58 33,29 c49,44 92,35 92,-21 0,-20 -54,-79 -258,-283 -142,-141 -262,-257 -268,-257 -5,0 -20,7 -32,16z"/>  <path fill="#F00000" d="M950,850 c-23,19 -209,367 -205,385 3,15 26,17 221,20 185,2 218,0 223,-13 6,-16 -194,-392 -213,-399 -6,-3 -18,1 -26,7z m53,182 l0,65 -35,0 -35,0 0,-65 0,-65 35,0 35,0 0,65z m-2,132 c3,32 2,33 -32,33 -33,0 -36,-3 -36,-28 0,-16 3,-32 7,-36 4,-4 19,-6 33,-4 20,2 26,9 28,35z"/>`,
-    conntng: `<g fill="var(--sol-dark-green)"><rect x="550" y="1" width="200" height="350" opacity=".1"/><rect x="550" y="1" width="200" height="350" transform="rotate(45 650 650)" opacity=".25"/><rect x="550" y="1" width="200" height="350" transform="rotate(90 650 650)" opacity=".5"/><rect x="550" y="1" width="200" height="350" transform="rotate(135 650 650)" opacity=".75"/><rect x="550" y="1" width="200" height="350" transform="rotate(180 650 650)" opacity="1.00"/><animateTransform attributeName="transform" type="rotate" calcMode="discrete" dur="0.9s" values="0 650 650;45 650 650;90 650 650;135 650 650;180 650 650;225 650 650;270 650 650;315 650 650;360 650 650" repeatCount="indefinite"/></g>`,
+    connSVG: `<title>Connected</title><path fill="var(--sol-mid-green)" d="M1090,140 l-126,124 -40,-20 c-24,-13 -67,-23 -106,-26 -57,-4 -75,-1 -123,21 -31,15 -83,51 -115,81 l-58,56 -28,-30 c-43,-44 -95,-36 -95,15 0,28 507,535 536,535 50,0 58,-52 14,-95 l-30,-28 56,-58 c30,-32 66,-84 81,-115 22,-48 25,-66 21,-123 -3,-39 -14,-83 -26,-107 l-21,-41 115,-114 c64,-63 120,-122 125,-132 13,-22 -13,-67 -38,-67 -9,0 -73,56 -142,124z"/>  <path fill="var(--sol-mid-green)" d="M330,420 c-20,20 -13,53 18,83 l30,28 -56,58 c-30,32 -66,84 -81,115 -22,48 -25,66 -21,123 3,39 14,83 26,107 l21,41 -115,114 c-64,63 -120,122 -125,132 -13,22 13,67 38,67 9,0 73,-56 142,-124 l126,-124 40,20 c24,13 67,23 106,26 57,4 75,1 123,-21 31,-15 83,-51 115,-81 l58,-56 28,30 c43,44 95,36 95,-15 0,-28 -507,-535 -536,-535 -11,0 -25,5 -32,12z"/>`,
+    dscnSVG: `<title>Disconnected</title><path fill="#D00000" d="M1140,100 l-53,50 -43,-21 c-107,-55 -226,-30 -332,70 l-62,58 -33,-29 c-49,-44 -92,-35 -92,21 0,18 18,43 60,85 l60,59 -85,86 c-86,86 -102,119 -73,148 25,25 53,10 140,-75 l89,-87 61,62 62,61 -87,89 c-48,49 -87,95 -87,101 0,28 22,51 48,51 21,0 47,-20 112,-85 l84,-84 67,64 c37,36 71,65 76,65 19,0 53,-32 53,-50 0,-11 -13,-34 -29,-52 l-29,-33 58,-62 c100,-106 125,-225 70,-332 l-21,-43 50,-53 c28,-30 51,-58 51,-62 0,-17 -32,-53 -46,-53 -8,0 -39,23 -69,51z"/>  <path fill="#D00000" d="M220,540 c-30,21 -28,47 7,86 l29,33 -58,62 c-100,106 -125,225 -70,332 l21,43 -50,53 c-28,30 -51,58 -51,62 0,17 32,53 46,53 8,0 39,-23 69,-51 l53,-50 43,21 c107,55 226,30 332,-70 l62,-58 33,29 c49,44 92,35 92,-21 0,-20 -54,-79 -258,-283 -142,-141 -262,-257 -268,-257 -5,0 -20,7 -32,16z"/>  `,
+    conntng: `<title>Connecting</title><g fill="var(--sol-dark-green)"><rect x="550" y="1" width="200" height="350" opacity=".1"/><rect x="550" y="1" width="200" height="350" transform="rotate(45 650 650)" opacity=".25"/><rect x="550" y="1" width="200" height="350" transform="rotate(90 650 650)" opacity=".5"/><rect x="550" y="1" width="200" height="350" transform="rotate(135 650 650)" opacity=".75"/><rect x="550" y="1" width="200" height="350" transform="rotate(180 650 650)" opacity="1.00"/><animateTransform attributeName="transform" type="rotate" calcMode="discrete" dur="0.9s" values="0 650 650;45 650 650;90 650 650;135 650 650;180 650 650;225 650 650;270 650 650;315 650 650;360 650 650" repeatCount="indefinite"/></g>`,
+    pausSVG: `<title>Connection Paused</title><rect x="25" y="75" rx="200" ry="200" height="1150" width="1250"  fill="#fff" stroke="var(--sol-dark-gray)" stroke-width="50px" /><line x1="450" y1="350" x2="450" y2="950" stroke="var(--sol-dark-green)" stroke-width="180px" /><line x1="850" y1="350" x2="850" y2="950" stroke="var(--sol-dark-green)" stroke-width="180px" />`,
     file_dl: `<path fill="#fff" stroke="#000" stroke-linecap="round" stroke-width="50px" d="M250,100 h600 l200,200 v900 h-800 v-1000 z" /><line stroke="var(--sol-mid-green)" stroke-width="100px" stroke-linecap="round" x1="650" y1="300" x2="650" y2="1000" /><line stroke="var(--sol-mid-green)" stroke-width="100px" stroke-linecap="round" x1="450" y1="750" x2="650" y2="1000" /><line stroke="var(--sol-mid-green)" stroke-width="100px" stroke-linecap="round" x1="850" y1="750" x2="650" y2="1000" />`,
     file_raw: `<path fill="#fff" stroke="#000" stroke-linecap="round" stroke-width="50px" d="M250,100 h600 l200,200 v900 h-800 v-1000 z" /><rect height="600px" width="1200px" fill="var(--sol-dark-gray)" x="50" y="450" rx="50" ry="50" /><text x="90" y="930" fill="#fff" font-size="410pt" font-family="Calibri" font-weight="bold">RAW</text>`,
     file_txt: `<path fill="#fff" stroke="#000" stroke-linecap="round" stroke-width="50px" d="M250,100 h600 l200,200 v900 h-800 v-1000 z" /><rect height="600px" width="1200px" fill="var(--sol-mid-green)" x="50" y="450" rx="50" ry="50" /><text x="120" y="970" fill="#fff" font-size="515pt" font-family="Calibri" font-weight="bold">TXT</text>`,
@@ -1007,8 +1028,30 @@ SolaceWebUtility.ui = {
     document.getElementById("msgTabHdrRaw").onclick = function() { SolaceWebUtility.ui.showTab(this); };
     
     // add actions to message list buttons (bulk)
-    document.getElementById("filterMsgList").onclick = function() { SolaceWebUtility.ui.showMessageFilter(); };
+    document.getElementById("filterMsgList").onclick = function() { SolaceWebUtility.ui.toggleMessageFilter(); };
     document.getElementById("deleteSelectedMsgs").onclick = function() { SolaceWebUtility.ui.confirmBulkDelMsges(); };
+    
+    // add actions to message filter buttons
+    document.getElementById("msgFilterSet").onclick = function() {
+      SolaceWebUtility.ui.setMessageFilter();
+    };
+    document.getElementById("msgFilterClear").onclick = function() {
+      SolaceWebUtility.ui.clearMessageFilter();
+      SolaceWebUtility.ui.showPopup("Filter Cleared", 1000, "info");
+    };
+    
+    // add "enter" for message filter text box
+    document.getElementById("filterTextBody").addEventListener("keydown", function(event) {
+        if (event.key === 'Enter') {
+          if (document.getElementById("filterTextBody").value.length == 0) {
+            SolaceWebUtility.ui.clearMessageFilter();
+            SolaceWebUtility.ui.showPopup("Filter Cleared", 1000, "info");
+          } else {
+            SolaceWebUtility.ui.setMessageFilter();
+            SolaceWebUtility.ui.showPopup("Filter Applied", 1000, "info");
+          }
+        }
+      });
     
     // add action to header checkbox
     document.getElementById("msgHdrCheckbox").onclick = function() { SolaceWebUtility.ui.toggleCheckboxes(this); };
@@ -1105,6 +1148,8 @@ SolaceWebUtility.ui = {
       document.getElementById("messageListBody").innerHTML = SolaceWebUtility.ui.html.disconnectedMessageList;
       document.getElementById("msgHdrCheckbox").disabled = true;
       document.getElementById("msgHdrCheckbox").checked = false;
+      document.getElementById("filterMessageForm").classList.add("hidden");
+      SolaceWebUtility.ui.clearMessageFilter();
       document.getElementById("msgListBulkActions").classList.add("hidden");
       SolaceWebUtility.ui.resetTabHeaders(document.getElementById("msgTabHdrContent").parentElement);
       SolaceWebUtility.ui.clearAllTabs(document.getElementById("msgTabBodyContent").parentElement);
@@ -1305,7 +1350,7 @@ SolaceWebUtility.ui = {
       }
     }
   },
-  
+  // UI: trigger message download TODO add more binary file type support in future to autp append file extension and set MIME in Blob
   downloadMessage: function(msgId) {
     let dataLen = SolaceWebUtility.clientSession.queuedMessages[msgId].SWU.content.length;
     let data = new Uint8Array(dataLen);
@@ -1337,8 +1382,44 @@ SolaceWebUtility.ui = {
   },
   
   // UI: show message list filter panel
-  showMessageFilter: function() {
-    
+  toggleMessageFilter: function() {
+    if (document.getElementById("filterMessageForm").classList.contains("hidden")) {
+      document.getElementById("filterMessageForm").classList.remove("hidden");
+    } else {
+      document.getElementById("filterMessageForm").classList.add("hidden");
+    }
+  },
+  
+  // UI: clear message filter function to reset all filter related elements
+  clearMessageFilter: function() {
+    document.getElementById("filterTextBody").value = "";
+    document.getElementById("filterMsgList").innerHTML = SolaceWebUtility.ui.svg.filterInactive;
+    let msgList = document.querySelectorAll("#messageListBody tr.message-row.hidden")
+    for (let row of msgList)
+      row.classList.remove("hidden");
+    SolaceWebUtility.ui.updateDisplayCount();
+  },
+  
+  // UI: set message filter active. filtering is referencing queuedMessages. TODO review if this should be in another namespace (or at least part of the function broken into different namespaces).
+  setMessageFilter: function() {
+    document.getElementById("filterMsgList").innerHTML = SolaceWebUtility.ui.svg.filterActive;
+    for (let msgId of Object.keys(SolaceWebUtility.clientSession.queuedMessages)) {
+      let msg = SolaceWebUtility.clientSession.queuedMessages[msgId];
+      if (SolaceWebUtility.ui.filterMatch(msgId)) {
+        document.getElementById(msg.SWU.domId).classList.remove("hidden");
+      } else {
+        document.getElementById(msg.SWU.domId).classList.add("hidden");
+        document.getElementById("msgRowCheckBox-" + msgId).checked = false;
+      }
+    }
+    SolaceWebUtility.ui.updateDisplayCount();
+    if (document.getElementById("msgDisplayCount").textContent != "0")
+      SolaceWebUtility.ui.toggleMessageFilter();
+  },
+  
+  // UI: function to boolean results whether the message matches the filter TODO review along with setMessageFilter() if this should be in this namespace.
+  filterMatch: function(msgId) {
+    return SolaceWebUtility.clientSession.queuedMessages[msgId].SWU.isText && new RegExp(document.getElementById("filterTextBody").value).test(SolaceWebUtility.clientSession.queuedMessages[msgId].SWU.content);
   },
   
   /*
@@ -1349,7 +1430,7 @@ SolaceWebUtility.ui = {
   toggleCheckboxes: function(headerCheckbox) {
     const tableBody = headerCheckbox.getAttribute("msg-table-target");
     if (document.getElementById(tableBody) != null) {
-      let checkboxes = document.getElementById(tableBody).getElementsByClassName("message-row-checkbox");
+      let checkboxes = document.querySelectorAll("#messageListBody tr.message-row:not(.hidden) input.message-row-checkbox");
       for (let dom of checkboxes) {
         if (dom instanceof HTMLInputElement && dom.getAttribute("type").toLowerCase() == "checkbox") {
           dom.checked = headerCheckbox.checked;
@@ -1368,7 +1449,7 @@ SolaceWebUtility.ui = {
 
   // function to update message display count in ui
   updateDisplayCount: function() {
-    document.getElementById("msgDisplayCount").textContent = document.querySelectorAll("#messageListBody tr.message-row").length;
+    document.getElementById("msgDisplayCount").textContent = document.querySelectorAll("#messageListBody tr.message-row:not(.hidden)").length;
   },
   
   // function to update selected message count in ui
@@ -1602,7 +1683,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   
   // added web app info
   document.getElementById("suwInfo").innerHTML = `Solace Web Utility v${SolaceWebUtility.version}` + ((SolaceWebUtility.isHosted) ? "" : "<br>(Local Mode)");
-  document.getElementById("suwInfo").classList.add("pointer");
   document.getElementById("suwInfo").onclick = function() {
     window.location = "https://github.com/SolacePSGSolutions/solace-queue-browser";
   };
@@ -1654,7 +1734,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       </ul>
     </nav>
     <!-- SOLACE WEB UTILITY INFO -->
-    <div id="suwInfo" class=" section-padding log-style sticky-bottom"></div>
+    <div id="suwInfo" class="section-padding log-style sticky-bottom pointer"></div>
   </aside>
   
   <!-- MAIN BODY -->
@@ -1666,6 +1746,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         <summary class="section-title pointer">
           Solace PubSub+ Broker Client Connection
           <svg id="clientConnectStatus" class="std-ico" version="1.0" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 1300 1300"></svg>
+          <svg id="pause" class="std-ico" version="1.0" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 1300 1300">
+            
+          </svg>
         </summary>
         
         <div class="flex-container-row">
@@ -1694,13 +1777,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         <form class="login-form flex-container-row">
           <input class="login-field flex-item" type="text" name="clientVpn" id="clientVpn" placeholder="Message VPN" required>
           <input class="login-field flex-item" type="text" name="clientQueue" id="clientQueue" placeholder="Queue Name" required>
-          <svg id="selectVpnQueue" class="pointer beta" width="33px" height="33px" viewBox="0 0 1300 1300" xmlns="http://www.w3.org/2000/svg">
-            <title>Select VPN and Queue</title>
-            <circle cx="650" cy="650" r="650" fill="var(--sol-dark-green)" />
-            <circle cx="600" cy="550" r="350" fill="#fff" />
-            <circle cx="600" cy="550" r="200" fill="var(--sol-dark-green)" />
-            <line x1="850" y1="850" x2="950" y2="950" stroke="#fff" stroke-width="120px" stroke-linecap="round" />
-          </svg>
+          <div class="beta login-field flex-item flex-container-row input-text-wrapper" style="padding:0px;vertical-align:middle">
+            <input class="flex-item" type="text" name="clientQ" id="clientQ" placeholder="Queue Name" required><svg class="pointer beta" width="30px" height="100%" viewBox="0 0 1300 1300" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="600" cy="550" r="250" fill="#fff" stroke="var(--sol-dark-green)" stroke-width="130px" />
+            <line x1="850" y1="850" x2="950" y2="950" stroke="var(--sol-dark-green)" stroke-width="120px" stroke-linecap="round" />
+            </svg>
+            
+          </div>
         </form>
         <form class="login-form flex-container-row">
           <button class="login-button pointer" name="clientConnectSave" id="clientConnectSave">Save</button>
@@ -1717,7 +1800,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         <div class="section-title-part">Displaying <span id="msgDisplayCount">0</span> of <span id="msgCount">0</span> messages</div>
         <div class="section-title-part">Selected <span id="msgSelectedCount">0</span></div>
         <div class="section-title-part" id="msgListBulkActions">
-          <svg id="filterMsgList" class="pointer beta" width="15px" height="15px" viewBox="0 0 1300 1300" xmlns="http://www.w3.org/2000/svg">
+          <svg id="filterMsgList" class="pointer" width="15px" height="15px" viewBox="0 0 1300 1300" xmlns="http://www.w3.org/2000/svg">
             <path fill="var(--sol-mid-gray)" d="M100,100 h1100 l-450,550 v500 l-200,-100 v-400 l-450-550 z" />
           </svg>
           <svg id="deleteSelectedMsgs" class="pointer" width="15px" height="15px" viewBox="0 0 1300 1300" xmlns="http://www.w3.org/2000/svg">
@@ -1728,6 +1811,11 @@ window.addEventListener('DOMContentLoaded', async () => {
             <line stroke="#fff" x1="850" y1="600" x2="840" y2="950" stroke-width="110px" stroke-linecap="round" />
           </svg>
         </div>
+      </header>
+      <header class="bg-gray" id="filterMessageForm" style="position:sticky;top:40px">
+        Message Body: <input type="text" id="filterTextBody">
+        <button id="msgFilterSet">Filter</button>
+        <button id="msgFilterClear">Clear</button>
       </header>
       <!-- Message ID, Spooled Time, Size -->
       <table class="message-list-table">
@@ -1761,7 +1849,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         <div class="log-style norm-font std-height border tab-body flex-item hidden" id="msgTabBodyRaw"></div>
       </div>
     </section>
-    
   </main>
 </body>
 </html>
