@@ -1,9 +1,12 @@
-# Solace Queue Browser
+# Solace Queue Browser Web Utility
 
 ## Overview
 
+> [!TIP]
+> Enterprise support is available through Solace Professional Services. Talk to your Solace consultant or sales contact to find out more!
+
 > [!IMPORTANT]
-> This is an open-source non-production tool that is not officially supported under Solace Customer Support policy.
+> This is an open-source tool that is not officially supported under Solace Customer Support policy.
 
 The application is intended to be able to run **without a backend application (e.g. web server)**.
 
