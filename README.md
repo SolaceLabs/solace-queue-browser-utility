@@ -22,6 +22,8 @@ Users are expected to know the connection parameters / details.
    - Edge 137+
    - Chrome 137+
    - Firefox 137+
+   - Chromium 137+
+   - Thorium 130+
 2. Solace Javascript API (Browser) v10.18.2
 
 ## Installation / Running the App
